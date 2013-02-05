@@ -6,8 +6,14 @@
 //
 
 #import <objc/runtime.h>
+#import <QuartzCore/QuartzCore.h>
 
 #import "MTStackableNavigationController.h"
+
+#define kPushAnimationDuration 0.3
+#define kPopAnimationDuration 0.3
+#define kCoveredControllerWidthDivisor 4
+#define kContainerViewShadowWidth 15
 
 static void * const kStackableNavigationControllerStorageKey = (void*)&kStackableNavigationControllerStorageKey;
 
@@ -64,12 +70,22 @@ static void * const kStackableNavigationControllerStorageKey = (void*)&kStackabl
   UIView *newContainerView = [self containerViewForController:viewController];
   if (animated) {
     CGRect newContainerFinalFrame = newContainerView.frame;
-    CGRect currentContainerFinalFrame = CGRectOffset(currentContainerView.frame, -self.view.bounds.size.width / 4, 0);
-    newContainerView.frame = CGRectOffset(newContainerView.frame, self.view.bounds.size.width, 0);
+    CGRect currentContainerFinalFrame = CGRectOffset(currentContainerView.frame, -self.view.bounds.size.width / kCoveredControllerWidthDivisor, 0);
+    newContainerView.frame = CGRectOffset(newContainerView.frame, self.view.bounds.size.width + kContainerViewShadowWidth, 0);
+
+    newContainerView.layer.masksToBounds = NO;
+    newContainerView.layer.shadowOffset = CGSizeMake(-kContainerViewShadowWidth, kContainerViewShadowWidth * 1.5);
+    newContainerView.layer.shadowRadius = kContainerViewShadowWidth / 5;
+    newContainerView.layer.shadowOpacity = 0.5;
+    newContainerView.layer.shadowPath = [UIBezierPath bezierPathWithRect:newContainerView.bounds].CGPath;
     [self.view addSubview:newContainerView];
-    [UIView animateWithDuration:0.3 animations:^{
+    [UIView animateWithDuration:kPushAnimationDuration animations:^{
       newContainerView.frame = newContainerFinalFrame;
       currentContainerView.frame = currentContainerFinalFrame;
+    } completion:^(BOOL finished) {
+      newContainerView.layer.masksToBounds = YES;
+      newContainerView.layer.shadowOpacity = 0;
+      newContainerView.layer.shadowPath = NULL;
     }];
   } else {
     [self.view addSubview:newContainerView];
@@ -87,16 +103,20 @@ static void * const kStackableNavigationControllerStorageKey = (void*)&kStackabl
 
     if (animated) {
       UIViewController *newViewController = self.childViewControllers[self.childViewControllers.count - 2];
-      CGRect oldContainerFinalFrame = CGRectOffset(self.topViewController.view.superview.frame, self.view.bounds.size.width, 0);
+      CGRect oldContainerFinalFrame = CGRectOffset(self.topViewController.view.superview.frame, self.view.bounds.size.width + kContainerViewShadowWidth, 0);
       CGRect newContainerFinalFrame = self.view.bounds;
-      [UIView animateWithDuration:0.3 animations:^{
+      oldController.view.superview.layer.masksToBounds = NO;
+      oldController.view.superview.layer.shadowOffset = CGSizeMake(-kContainerViewShadowWidth, kContainerViewShadowWidth * 1.5);
+      oldController.view.superview.layer.shadowRadius = kContainerViewShadowWidth / 5;
+      oldController.view.superview.layer.shadowOpacity = 0.5;
+      oldController.view.superview.layer.shadowPath = [UIBezierPath bezierPathWithRect:oldController.view.superview.bounds].CGPath;
+      [UIView animateWithDuration:kPopAnimationDuration animations:^{
         oldController.view.superview.frame = oldContainerFinalFrame;
         newViewController.view.superview.frame = newContainerFinalFrame;
       } completion:^(BOOL finished) {
         [oldController.view.superview removeFromSuperview];
         [oldController setStackableNavigationController:nil];
         [oldController removeFromParentViewController];
-
         [oldController endAppearanceTransition];
         [oldController didMoveToParentViewController:nil];
       }];
@@ -104,7 +124,6 @@ static void * const kStackableNavigationControllerStorageKey = (void*)&kStackabl
       [oldController.view.superview removeFromSuperview];
       [oldController setStackableNavigationController:nil];
       [oldController removeFromParentViewController];
-
       [oldController endAppearanceTransition];
       [oldController didMoveToParentViewController:nil];
     }
