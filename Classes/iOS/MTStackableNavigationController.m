@@ -61,12 +61,16 @@ static void * const kStackableNavigationControllerStorageKey = (void*)&kStackabl
 }
 
 - (UIViewController *)popViewControllerAnimated:(BOOL)animated {
-  UIViewController *oldController = self.topViewController;
-  [oldController willMoveToParentViewController:nil];
-  [oldController.view removeFromSuperview];
-  [oldController setStackableNavigationController:nil];
-  [oldController removeFromParentViewController];
-  return oldController;
+  if (self.childViewControllers.count > 1) {
+    UIViewController *oldController = self.topViewController;
+    [oldController willMoveToParentViewController:nil];
+    [oldController.view removeFromSuperview];
+    [oldController setStackableNavigationController:nil];
+    [oldController removeFromParentViewController];
+    return oldController;
+  } else {
+    return nil;
+  }
 }
 
 - (NSArray *)popToViewController:(UIViewController *)viewController animated:(BOOL)animated {
