@@ -10,5 +10,7 @@
 @class MTStackableNavigationController;
 
 @interface UIViewController (MTStackedNavigationController)
-@property(nonatomic,readonly,retain) MTStackableNavigationController *stackableNavigationController;
+@property(nonatomic,readonly,strong) MTStackableNavigationController *stackableNavigationController;
+@property(nonatomic) CGFloat stackedNavigationLeftPeek;
+@property(nonatomic) CGFloat stackedNavigationRightHang;
 @end

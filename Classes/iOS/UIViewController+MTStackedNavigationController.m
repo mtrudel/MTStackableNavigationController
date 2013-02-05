@@ -11,6 +11,8 @@
 
 
 static void * const kStackableNavigationControllerStorageKey = (void*)&kStackableNavigationControllerStorageKey;
+static void * const kStackableNavigationLeftPeekStorageKey = (void*)&kStackableNavigationLeftPeekStorageKey;
+static void * const kStackableNavigationRightShelfStorageKey = (void*)&kStackableNavigationRightShelfStorageKey;
 
 @implementation UIViewController (MTStackedNavigationController)
 
@@ -26,6 +28,22 @@ static void * const kStackableNavigationControllerStorageKey = (void*)&kStackabl
 
 - (void)setStackableNavigationController:(MTStackableNavigationController *)stackableNavigationController {
   objc_setAssociatedObject(self, kStackableNavigationControllerStorageKey, stackableNavigationController, OBJC_ASSOCIATION_RETAIN);
+}
+
+- (CGFloat)stackedNavigationLeftPeek {
+  return [objc_getAssociatedObject(self, kStackableNavigationLeftPeekStorageKey) floatValue];
+}
+
+- (void)setStackedNavigationLeftPeek:(CGFloat)stackedNavigationLeftPeek {
+  objc_setAssociatedObject(self, kStackableNavigationLeftPeekStorageKey, @(stackedNavigationLeftPeek), OBJC_ASSOCIATION_RETAIN);
+}
+
+- (CGFloat)stackedNavigationRightHang {
+  return [objc_getAssociatedObject(self, kStackableNavigationRightShelfStorageKey) floatValue];
+}
+
+- (void)setStackedNavigationRightHang:(CGFloat)stackedNavigationRightHang {
+  objc_setAssociatedObject(self, kStackableNavigationRightShelfStorageKey, @(stackedNavigationRightHang), OBJC_ASSOCIATION_RETAIN);
 }
 
 @end
