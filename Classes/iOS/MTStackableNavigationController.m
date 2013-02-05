@@ -54,7 +54,9 @@
     [self.view addSubview:newContainerView];
     [UIView animateWithDuration:kPushAnimationDuration animations:^{
       newContainerView.frame = newContainerFinalFrame;
-      currentController.view.superview.frame = currentContainerFinalFrame;
+      if (currentController.stackableNavigationItem.slidesLeftOnParenthood) {
+        currentController.view.superview.frame = currentContainerFinalFrame;
+      }
     } completion:^(BOOL finished) {
       [self removeShadowFromView:newContainerView];
     }];
