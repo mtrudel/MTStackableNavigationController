@@ -6,7 +6,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "UIViewController+MTStackedNavigationController.h"
+#import "UIViewController+MTStackableNavigationController.h"
 
 @interface MTStackableNavigationController : UIViewController
 @property(nonatomic, readonly) NSArray *viewControllers;

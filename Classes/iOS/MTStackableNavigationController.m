@@ -8,8 +8,9 @@
 #import <QuartzCore/QuartzCore.h>
 
 #import "MTStackableNavigationController.h"
-#import "UIViewController+MTStackedNavigationController.h"
-#import "UIViewController+MTStackedNavigationController_Protected.h"
+#import "MTStackableNavigationItem.h"
+#import "UIViewController+MTStackableNavigationController.h"
+#import "UIViewController+MTStackableNavigationController_Protected.h"
 
 #define kPushAnimationDuration 0.3
 #define kPopAnimationDuration 0.3
@@ -44,7 +45,7 @@
   [self addChildViewController:viewController];
   [viewController setStackableNavigationController:self];
   [viewController beginAppearanceTransition:YES animated:animated];
-  UIView *newContainerView = [self containerViewForController:viewController withBounds:UIEdgeInsetsInsetRect(self.view.bounds, UIEdgeInsetsMake(0, currentController.stackedNavigationLeftPeek, 0, 0))];
+  UIView *newContainerView = [self containerViewForController:viewController withBounds:UIEdgeInsetsInsetRect(self.view.bounds, UIEdgeInsetsMake(0, currentController.stackableNavigationItem.leftPeek, 0, 0))];
   if (animated) {
     CGRect newContainerFinalFrame = newContainerView.frame;
     CGRect currentContainerFinalFrame = CGRectOffset(currentController.view.superview.frame, -self.view.bounds.size.width / kCoveredControllerWidthDivisor, 0);
