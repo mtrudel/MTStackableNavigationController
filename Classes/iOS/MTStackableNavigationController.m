@@ -54,11 +54,27 @@ static void * const kStackableNavigationControllerStorageKey = (void*)&kStackabl
 }
 
 - (void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated {
+  UIView *currentContainerView = self.topViewController.view.superview;
+
   [viewController willMoveToParentViewController:self];
   [self addChildViewController:viewController];
   [viewController setStackableNavigationController:self];
-  [self.view addSubview:[self containerViewForController:viewController]];
   [viewController beginAppearanceTransition:YES animated:animated];
+
+  UIView *newContainerView = [self containerViewForController:viewController];
+  if (animated) {
+    CGRect newContainerFinalFrame = newContainerView.frame;
+    CGRect currentContainerFinalFrame = CGRectOffset(currentContainerView.frame, -self.view.bounds.size.width / 4, 0);
+    newContainerView.frame = CGRectOffset(newContainerView.frame, self.view.bounds.size.width, 0);
+    [self.view addSubview:newContainerView];
+    [UIView animateWithDuration:0.3 animations:^{
+      newContainerView.frame = newContainerFinalFrame;
+      currentContainerView.frame = currentContainerFinalFrame;
+    }];
+  } else {
+    [self.view addSubview:newContainerView];
+  }
+
   [viewController endAppearanceTransition];
   [viewController didMoveToParentViewController:self];
 }
@@ -67,10 +83,31 @@ static void * const kStackableNavigationControllerStorageKey = (void*)&kStackabl
   if (self.childViewControllers.count > 1) {
     UIViewController *oldController = self.topViewController;
     [oldController willMoveToParentViewController:nil];
-    [oldController.view.superview removeFromSuperview];
-    [oldController setStackableNavigationController:nil];
-    [oldController removeFromParentViewController];
     [oldController beginAppearanceTransition:NO animated:animated];
+
+    if (animated) {
+      UIViewController *newViewController = self.childViewControllers[self.childViewControllers.count - 2];
+      CGRect oldContainerFinalFrame = CGRectOffset(self.topViewController.view.superview.frame, self.view.bounds.size.width, 0);
+      CGRect newContainerFinalFrame = self.view.bounds;
+      [UIView animateWithDuration:0.3 animations:^{
+        oldController.view.superview.frame = oldContainerFinalFrame;
+        newViewController.view.superview.frame = newContainerFinalFrame;
+      } completion:^(BOOL finished) {
+        [oldController.view.superview removeFromSuperview];
+        [oldController setStackableNavigationController:nil];
+        [oldController removeFromParentViewController];
+
+        [oldController endAppearanceTransition];
+        [oldController didMoveToParentViewController:nil];
+      }];
+    } else {
+      [oldController.view.superview removeFromSuperview];
+      [oldController setStackableNavigationController:nil];
+      [oldController removeFromParentViewController];
+
+      [oldController endAppearanceTransition];
+      [oldController didMoveToParentViewController:nil];
+    }
     return oldController;
   } else {
     return nil;
