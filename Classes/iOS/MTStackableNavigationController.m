@@ -58,7 +58,9 @@
         currentController.view.superview.frame = currentContainerFinalFrame;
       }
     } completion:^(BOOL finished) {
-      [self removeShadowFromView:newContainerView];
+      if (newContainerView.frame.origin.x == 0) {
+        [self removeShadowFromView:newContainerView];
+      }
     }];
   } else {
     [self.view addSubview:newContainerView];
