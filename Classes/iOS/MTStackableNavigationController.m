@@ -37,7 +37,7 @@
 #pragma mark - view controller hieracrchy manipulation methods (mirroring UINavigationController)
 
 - (void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated {
-  UIView *currentContainerView = self.topViewController.view.superview;
+  UIViewController *currentController = self.topViewController;
 
   [viewController willMoveToParentViewController:self];
   [self addChildViewController:viewController];
@@ -46,13 +46,13 @@
   UIView *newContainerView = [self containerViewForController:viewController];
   if (animated) {
     CGRect newContainerFinalFrame = newContainerView.frame;
-    CGRect currentContainerFinalFrame = CGRectOffset(currentContainerView.frame, -self.view.bounds.size.width / kCoveredControllerWidthDivisor, 0);
+    CGRect currentContainerFinalFrame = CGRectOffset(currentController.view.superview.frame, -self.view.bounds.size.width / kCoveredControllerWidthDivisor, 0);
     newContainerView.frame = CGRectOffset(newContainerView.frame, self.view.bounds.size.width + kContainerViewShadowWidth, 0);
     [self addShadowToView:newContainerView];
     [self.view addSubview:newContainerView];
     [UIView animateWithDuration:kPushAnimationDuration animations:^{
       newContainerView.frame = newContainerFinalFrame;
-      currentContainerView.frame = currentContainerFinalFrame;
+      currentController.view.superview.frame = currentContainerFinalFrame;
     } completion:^(BOOL finished) {
       [self removeShadowFromView:newContainerView];
     }];
