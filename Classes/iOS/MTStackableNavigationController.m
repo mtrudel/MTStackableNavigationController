@@ -18,7 +18,13 @@ static void * const kStackableNavigationControllerStorageKey = (void*)&kStackabl
 @implementation UIViewController (MTStackableNavigationController)
 
 - (MTStackableNavigationController *)stackableNavigationController {
-  return objc_getAssociatedObject(self, kStackableNavigationControllerStorageKey);
+  UIViewController *cur = self;
+  MTStackableNavigationController *result;
+  while (cur != nil && result == nil) {
+    result = objc_getAssociatedObject(cur, kStackableNavigationControllerStorageKey);
+    cur = cur.parentViewController;
+  }
+  return result;
 }
 
 - (void)setStackableNavigationController:(MTStackableNavigationController *)stackableNavigationController {
