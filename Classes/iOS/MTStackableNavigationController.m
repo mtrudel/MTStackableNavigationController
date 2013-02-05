@@ -8,6 +8,7 @@
 #import <QuartzCore/QuartzCore.h>
 
 #import "MTStackableNavigationController.h"
+#import "UIViewController+MTStackedNavigationController.h"
 #import "UIViewController+MTStackedNavigationController_Protected.h"
 
 #define kPushAnimationDuration 0.3
@@ -43,7 +44,7 @@
   [self addChildViewController:viewController];
   [viewController setStackableNavigationController:self];
   [viewController beginAppearanceTransition:YES animated:animated];
-  UIView *newContainerView = [self containerViewForController:viewController];
+  UIView *newContainerView = [self containerViewForController:viewController withBounds:UIEdgeInsetsInsetRect(self.view.bounds, UIEdgeInsetsMake(0, currentController.stackedNavigationLeftPeek, 0, 0))];
   if (animated) {
     CGRect newContainerFinalFrame = newContainerView.frame;
     CGRect currentContainerFinalFrame = CGRectOffset(currentController.view.superview.frame, -self.view.bounds.size.width / kCoveredControllerWidthDivisor, 0);
@@ -105,10 +106,10 @@
 
 #pragma mark - Private methods
 
-- (UIView *)containerViewForController:(UIViewController *)viewController {
-  UIView *containerView = [[UIView alloc] initWithFrame:self.view.bounds];
+- (UIView *)containerViewForController:(UIViewController *)viewController withBounds:(CGRect)rect {
+  UIView *containerView = [[UIView alloc] initWithFrame:rect];
   CGRect navBarFrame, contentFrame;
-  CGRectDivide(self.view.bounds, &navBarFrame, &contentFrame, 44, CGRectMinYEdge);
+  CGRectDivide(rect, &navBarFrame, &contentFrame, 44, CGRectMinYEdge);
 
   UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:navBarFrame];
   [navBar pushNavigationItem:viewController.navigationItem animated:NO];
