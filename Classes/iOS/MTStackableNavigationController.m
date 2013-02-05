@@ -132,7 +132,7 @@
 
 - (void)addShadowToView:(UIView *)view {
   view.layer.masksToBounds = NO;
-  view.layer.shadowOffset = CGSizeMake(-kContainerViewShadowWidth, kContainerViewShadowWidth * 1.5);
+  view.layer.shadowOffset = CGSizeMake(-kContainerViewShadowWidth, 0);
   view.layer.shadowRadius = kContainerViewShadowWidth / 5;
   view.layer.shadowOpacity = 0.5;
   view.layer.shadowPath = [UIBezierPath bezierPathWithRect:view.bounds].CGPath;
