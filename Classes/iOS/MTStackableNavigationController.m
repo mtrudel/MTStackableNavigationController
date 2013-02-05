@@ -54,9 +54,12 @@ static void * const kStackableNavigationControllerStorageKey = (void*)&kStackabl
 }
 
 - (void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated {
+  [viewController willMoveToParentViewController:self];
   [self addChildViewController:viewController];
   [viewController setStackableNavigationController:self];
   [self.view addSubview:[self containerViewForController:viewController]];
+  [viewController beginAppearanceTransition:YES animated:animated];
+  [viewController endAppearanceTransition];
   [viewController didMoveToParentViewController:self];
 }
 
@@ -67,6 +70,7 @@ static void * const kStackableNavigationControllerStorageKey = (void*)&kStackabl
     [oldController.view.superview removeFromSuperview];
     [oldController setStackableNavigationController:nil];
     [oldController removeFromParentViewController];
+    [oldController beginAppearanceTransition:NO animated:animated];
     return oldController;
   } else {
     return nil;
