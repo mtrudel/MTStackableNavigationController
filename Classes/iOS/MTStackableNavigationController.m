@@ -64,7 +64,7 @@ static void * const kStackableNavigationControllerStorageKey = (void*)&kStackabl
   if (self.childViewControllers.count > 1) {
     UIViewController *oldController = self.topViewController;
     [oldController willMoveToParentViewController:nil];
-    [oldController.view removeFromSuperview];
+    [oldController.view.superview removeFromSuperview];
     [oldController setStackableNavigationController:nil];
     [oldController removeFromParentViewController];
     return oldController;
