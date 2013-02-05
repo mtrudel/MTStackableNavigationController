@@ -49,9 +49,8 @@ static void * const kStackableNavigationControllerStorageKey = (void*)&kStackabl
 
 - (void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated {
   [self addChildViewController:viewController];
-  viewController.view.frame = self.view.bounds;
-  [self.view addSubview:viewController.view];
   [viewController setStackableNavigationController:self];
+  [self.view addSubview:[self containerViewForController:viewController]];
   [viewController didMoveToParentViewController:self];
 }
 
@@ -79,4 +78,19 @@ static void * const kStackableNavigationControllerStorageKey = (void*)&kStackabl
   return [self popToViewController:self.childViewControllers[0] animated:animated];
 }
 
+- (UIView *)containerViewForController:(UIViewController *)viewController {
+  UIView *containerView = [[UIView alloc] initWithFrame:self.view.bounds];
+
+  CGRect navBarFrame, contentFrame;
+  CGRectDivide(self.view.bounds, &navBarFrame, &contentFrame, 44, CGRectMinYEdge);
+
+  UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:navBarFrame];
+  [navBar pushNavigationItem:viewController.navigationItem animated:NO];
+  [containerView addSubview:navBar];
+
+  viewController.view.frame = contentFrame;
+  [containerView addSubview:viewController.view];
+
+  return containerView;
+}
 @end
