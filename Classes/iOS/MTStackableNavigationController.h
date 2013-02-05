@@ -8,7 +8,7 @@
 #import <UIKit/UIKit.h>
 #import "UIViewController+MTStackableNavigationController.h"
 
-@interface MTStackableNavigationController : UIViewController
+@interface MTStackableNavigationController : UIViewController <UINavigationBarDelegate>
 @property(nonatomic, readonly) NSArray *viewControllers;
 
 - (id)initWithRootViewController:(UIViewController *)rootViewController;

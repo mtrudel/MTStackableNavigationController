@@ -45,7 +45,7 @@
   [self addChildViewController:viewController];
   [viewController setStackableNavigationController:self];
   [viewController beginAppearanceTransition:YES animated:animated];
-  UIView *newContainerView = [self containerViewForController:viewController withBounds:UIEdgeInsetsInsetRect(self.view.bounds, UIEdgeInsetsMake(0, currentController.stackableNavigationItem.leftPeek, 0, 0))];
+  UIView *newContainerView = [self containerViewForController:viewController withBounds:UIEdgeInsetsInsetRect(self.view.bounds, UIEdgeInsetsMake(0, currentController.stackableNavigationItem.leftPeek, 0, 0)) previousController:currentController];
   if (animated) {
     CGRect newContainerFinalFrame = newContainerView.frame;
     CGRect currentContainerFinalFrame = CGRectOffset(currentController.view.superview.frame, -self.view.bounds.size.width / kCoveredControllerWidthDivisor, 0);
@@ -109,12 +109,18 @@
 
 #pragma mark - Private methods
 
-- (UIView *)containerViewForController:(UIViewController *)viewController withBounds:(CGRect)rect {
+- (UIView *)containerViewForController:(UIViewController *)viewController withBounds:(CGRect)rect previousController:(UIViewController *)previousViewController {
   UIView *containerView = [[UIView alloc] initWithFrame:rect];
   CGRect navBarFrame, contentFrame;
   CGRectDivide(rect, &navBarFrame, &contentFrame, 44, CGRectMinYEdge);
 
   UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:navBarFrame];
+
+  if (!viewController.navigationItem.hidesBackButton && !viewController.navigationItem.leftBarButtonItem && !viewController.navigationItem.leftBarButtonItems) {
+    [navBar pushNavigationItem:previousViewController.navigationItem animated:NO];
+    navBar.delegate = self;
+  }
+  
   [navBar pushNavigationItem:viewController.navigationItem animated:NO];
   [containerView addSubview:navBar];
   viewController.view.frame = contentFrame;
@@ -143,4 +149,10 @@
   [oldController endAppearanceTransition];
   [oldController didMoveToParentViewController:nil];
 }
+
+- (BOOL)navigationBar:(UINavigationBar *)navigationBar shouldPopItem:(UINavigationItem *)item {
+  [self popViewControllerAnimated:YES];
+  return NO;
+}
+
 @end
