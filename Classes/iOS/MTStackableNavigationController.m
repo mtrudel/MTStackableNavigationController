@@ -40,29 +40,30 @@
 
 - (void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated {
   UIViewController *currentController = self.topViewController;
-
   [viewController willMoveToParentViewController:self];
   [self addChildViewController:viewController];
   [viewController setStackableNavigationController:self];
   [viewController beginAppearanceTransition:YES animated:animated];
-  UIView *newContainerView = [self containerViewForController:viewController withBounds:UIEdgeInsetsInsetRect(self.view.bounds, UIEdgeInsetsMake(0, currentController.stackableNavigationItem.leftPeek, 0, 0)) previousController:currentController];
+  UIView *newContainerView = [self containerViewForController:viewController previousController:currentController];
   if (animated) {
     CGRect newContainerFinalFrame = newContainerView.frame;
-    CGRect currentContainerFinalFrame = CGRectOffset(currentController.view.superview.frame, -self.view.bounds.size.width / kCoveredControllerWidthDivisor, 0);
-    newContainerView.frame = CGRectOffset(newContainerView.frame, self.view.bounds.size.width + kContainerViewShadowWidth, 0);
+    newContainerView.frame = CGRectOffset(newContainerView.frame, newContainerView.frame.size.width + kContainerViewShadowWidth, 0);
     [self addShadowToView:newContainerView];
     [self.view addSubview:newContainerView];
     [UIView animateWithDuration:kPushAnimationDuration animations:^{
       newContainerView.frame = newContainerFinalFrame;
-      if (currentController.stackableNavigationItem.slidesLeftOnParenthood) {
-        currentController.view.superview.frame = currentContainerFinalFrame;
+      if (currentController.stackableNavigationItem.leftPeek == 0) {
+        currentController.view.superview.frame = CGRectOffset(currentController.view.superview.frame, -self.view.bounds.size.width / kCoveredControllerWidthDivisor, 0);;
       }
     } completion:^(BOOL finished) {
-      if (newContainerView.frame.origin.x == 0) {
+      if (currentController.stackableNavigationItem.leftPeek == 0) {
         [self removeShadowFromView:newContainerView];
       }
     }];
   } else {
+    if (currentController.stackableNavigationItem.leftPeek != 0) {
+      [self addShadowToView:newContainerView];
+    }
     [self.view addSubview:newContainerView];
   }
   [viewController endAppearanceTransition];
@@ -111,14 +112,15 @@
 
 #pragma mark - Private methods
 
-- (UIView *)containerViewForController:(UIViewController *)viewController withBounds:(CGRect)rect previousController:(UIViewController *)previousViewController {
+- (UIView *)containerViewForController:(UIViewController *)viewController previousController:(UIViewController *)previousViewController {
+  CGRect rect = UIEdgeInsetsInsetRect(self.view.bounds, UIEdgeInsetsMake(0, previousViewController.stackableNavigationItem.leftPeek, 0, 0));
   UIView *containerView = [[UIView alloc] initWithFrame:rect];
   CGRect navBarFrame, contentFrame;
-  CGRectDivide(rect, &navBarFrame, &contentFrame, 44, CGRectMinYEdge);
+  CGRectDivide(containerView.bounds, &navBarFrame, &contentFrame, 44, CGRectMinYEdge);
 
   UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:navBarFrame];
 
-  if (!viewController.navigationItem.hidesBackButton && !viewController.navigationItem.leftBarButtonItem && !viewController.navigationItem.leftBarButtonItems) {
+  if (previousViewController.navigationItem) {
     [navBar pushNavigationItem:previousViewController.navigationItem animated:NO];
     navBar.delegate = self;
   }
