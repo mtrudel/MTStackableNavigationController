@@ -5,40 +5,15 @@
 //  Copyright (c) 2013 Mat Trudel. All rights reserved.
 //
 
-#import <objc/runtime.h>
 #import <QuartzCore/QuartzCore.h>
 
 #import "MTStackableNavigationController.h"
+#import "UIViewController+MTStackedNavigationController_Protected.h"
 
 #define kPushAnimationDuration 0.3
 #define kPopAnimationDuration 0.3
 #define kCoveredControllerWidthDivisor 4
 #define kContainerViewShadowWidth 15
-
-static void * const kStackableNavigationControllerStorageKey = (void*)&kStackableNavigationControllerStorageKey;
-
-@interface UIViewController (MTStackableNavigationControllerWriter)
-- (void)setStackableNavigationController:(MTStackableNavigationController *)stackableNavigationController;
-@end
-
-@implementation UIViewController (MTStackableNavigationController)
-
-- (MTStackableNavigationController *)stackableNavigationController {
-  UIViewController *cur = self;
-  MTStackableNavigationController *result;
-  while (cur != nil && result == nil) {
-    result = objc_getAssociatedObject(cur, kStackableNavigationControllerStorageKey);
-    cur = cur.parentViewController;
-  }
-  return result;
-}
-
-- (void)setStackableNavigationController:(MTStackableNavigationController *)stackableNavigationController {
-  objc_setAssociatedObject(self, kStackableNavigationControllerStorageKey, stackableNavigationController, OBJC_ASSOCIATION_RETAIN);
-}
-
-@end
-
 
 @implementation MTStackableNavigationController
 
