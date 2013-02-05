@@ -5,10 +5,30 @@
 //  Copyright (c) 2013 Mat Trudel. All rights reserved.
 //
 
+#import <objc/runtime.h>
+
 #import "MTStackableNavigationController.h"
 
-@implementation MTStackableNavigationController
+static void * const kStackableNavigationControllerStorageKey = (void*)&kStackableNavigationControllerStorageKey;
 
+@interface UIViewController (MTStackableNavigationControllerWriter)
+- (void)setStackableNavigationController:(MTStackableNavigationController *)stackableNavigationController;
+@end
+
+@implementation UIViewController (MTStackableNavigationController)
+
+- (MTStackableNavigationController *)stackableNavigationController {
+  return objc_getAssociatedObject(self, kStackableNavigationControllerStorageKey);
+}
+
+- (void)setStackableNavigationController:(MTStackableNavigationController *)stackableNavigationController {
+  objc_setAssociatedObject(self, kStackableNavigationControllerStorageKey, stackableNavigationController, OBJC_ASSOCIATION_RETAIN);
+}
+
+@end
+
+
+@implementation MTStackableNavigationController
 
 #pragma mark - Public access methods
 
@@ -31,6 +51,7 @@
   [self addChildViewController:viewController];
   viewController.view.frame = self.view.bounds;
   [self.view addSubview:viewController.view];
+  [viewController setStackableNavigationController:self];
   [viewController didMoveToParentViewController:self];
 }
 
@@ -38,6 +59,7 @@
   UIViewController *oldController = self.topViewController;
   [oldController willMoveToParentViewController:nil];
   [oldController.view removeFromSuperview];
+  [oldController setStackableNavigationController:nil];
   [oldController removeFromParentViewController];
   return oldController;
 }

@@ -7,6 +7,7 @@
 
 #import <UIKit/UIKit.h>
 
+
 @interface MTStackableNavigationController : UIViewController
 @property(nonatomic, readonly) NSArray *viewControllers;
 
@@ -20,3 +21,8 @@
 @property(nonatomic,readonly,retain) UIViewController *topViewController; // The top view controller on the stack.
 
 @end
+
+@interface UIViewController (MTStackableNavigationController)
+@property(nonatomic,readonly,retain) MTStackableNavigationController *stackableNavigationController;
+@end
+
