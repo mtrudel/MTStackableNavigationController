@@ -72,24 +72,27 @@
 
 - (UIViewController *)popViewControllerAnimated:(BOOL)animated {
   if (self.childViewControllers.count > 1) {
-    UIViewController *oldController = self.topViewController;
-    [oldController willMoveToParentViewController:nil];
-    [oldController beginAppearanceTransition:NO animated:animated];
+    UIViewController *currentController = self.topViewController;
+    [currentController willMoveToParentViewController:nil];
+    [currentController beginAppearanceTransition:NO animated:animated];
     if (animated) {
-      UIViewController *newViewController = self.childViewControllers[self.childViewControllers.count - 2];
-      CGRect oldContainerFinalFrame = CGRectOffset(self.topViewController.view.superview.frame, self.view.bounds.size.width + kContainerViewShadowWidth, 0);
-      CGRect newContainerFinalFrame = self.view.bounds;
-      [self addShadowToView:oldController.view.superview];
+      [self addShadowToView:currentController.view.superview];
       [UIView animateWithDuration:kPopAnimationDuration animations:^{
-        oldController.view.superview.frame = oldContainerFinalFrame;
-        newViewController.view.superview.frame = newContainerFinalFrame;
+        currentController.view.superview.frame = CGRectOffset(currentController.view.superview.frame, self.view.bounds.size.width + kContainerViewShadowWidth, 0);
+
+        UIViewController *revealedController = self.childViewControllers[self.childViewControllers.count - 2];
+
+        if (revealedController.stackableNavigationItem.leftPeek == 0) {
+          revealedController.view.superview.frame = CGRectOffset(revealedController.view.superview.frame, self.view.bounds.size.width / kCoveredControllerWidthDivisor, 0);
+        }
+
       } completion:^(BOOL finished) {
-        [self handleControllerRemoval:oldController];
+        [self handleControllerRemoval:currentController];
       }];
     } else {
-      [self handleControllerRemoval:oldController];
+      [self handleControllerRemoval:currentController];
     }
-    return oldController;
+    return currentController;
   } else {
     return nil;
   }
