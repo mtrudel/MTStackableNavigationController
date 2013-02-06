@@ -123,7 +123,7 @@
 
   UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:navBarFrame];
 
-  if (previousViewController.navigationItem) {
+  if (previousViewController.navigationItem && !viewController.navigationItem.hidesBackButton && !viewController.navigationItem.leftBarButtonItem && !viewController.navigationItem.leftBarButtonItems) {
     [navBar pushNavigationItem:previousViewController.navigationItem animated:NO];
     navBar.delegate = self;
   }
