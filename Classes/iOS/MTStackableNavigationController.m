@@ -63,6 +63,8 @@
   } else {
     if (currentController.stackableNavigationItem.leftPeek != 0) {
       [self addShadowToView:newContainerView];
+    } else {
+      currentController.view.superview.frame = CGRectOffset(currentController.view.superview.frame, -self.view.bounds.size.width / kCoveredControllerWidthDivisor, 0);;
     }
     [self.view addSubview:newContainerView];
   }
@@ -73,13 +75,13 @@
 - (UIViewController *)popViewControllerAnimated:(BOOL)animated {
   if (self.childViewControllers.count > 1) {
     UIViewController *currentController = self.topViewController;
+    UIViewController *revealedController = self.childViewControllers[self.childViewControllers.count - 2];
     [currentController willMoveToParentViewController:nil];
     [currentController beginAppearanceTransition:NO animated:animated];
     if (animated) {
       [self addShadowToView:currentController.view.superview];
       [UIView animateWithDuration:kPopAnimationDuration animations:^{
         currentController.view.superview.frame = CGRectOffset(currentController.view.superview.frame, self.view.bounds.size.width + kContainerViewShadowWidth, 0);
-        UIViewController *revealedController = self.childViewControllers[self.childViewControllers.count - 2];
         if (revealedController.stackableNavigationItem.leftPeek == 0) {
           revealedController.view.superview.frame = CGRectOffset(revealedController.view.superview.frame, self.view.bounds.size.width / kCoveredControllerWidthDivisor, 0);
         }
@@ -87,6 +89,9 @@
         [self handleControllerRemoval:currentController];
       }];
     } else {
+      if (revealedController.stackableNavigationItem.leftPeek == 0) {
+        revealedController.view.superview.frame = CGRectOffset(revealedController.view.superview.frame, self.view.bounds.size.width / kCoveredControllerWidthDivisor, 0);
+      }
       [self handleControllerRemoval:currentController];
     }
     return currentController;
