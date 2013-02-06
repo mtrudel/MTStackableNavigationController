@@ -7,6 +7,7 @@
 
 #import <UIKit/UIKit.h>
 #import "UIViewController+MTStackableNavigationController.h"
+#import "MTStackableNavigationItem.h"
 
 @interface MTStackableNavigationController : UIViewController <UINavigationBarDelegate>
 @property(nonatomic, readonly) NSArray *viewControllers;
