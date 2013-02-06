@@ -9,6 +9,5 @@
 
 @interface MTStackableNavigationItem : NSObject
 @property(nonatomic) CGFloat leftPeek;
-@property(nonatomic) CGFloat rightHang;
 
 @end
