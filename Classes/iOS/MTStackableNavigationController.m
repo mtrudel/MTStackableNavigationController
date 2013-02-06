@@ -79,13 +79,10 @@
       [self addShadowToView:currentController.view.superview];
       [UIView animateWithDuration:kPopAnimationDuration animations:^{
         currentController.view.superview.frame = CGRectOffset(currentController.view.superview.frame, self.view.bounds.size.width + kContainerViewShadowWidth, 0);
-
         UIViewController *revealedController = self.childViewControllers[self.childViewControllers.count - 2];
-
         if (revealedController.stackableNavigationItem.leftPeek == 0) {
           revealedController.view.superview.frame = CGRectOffset(revealedController.view.superview.frame, self.view.bounds.size.width / kCoveredControllerWidthDivisor, 0);
         }
-
       } completion:^(BOOL finished) {
         [self handleControllerRemoval:currentController];
       }];
@@ -120,14 +117,11 @@
   UIView *containerView = [[UIView alloc] initWithFrame:rect];
   CGRect navBarFrame, contentFrame;
   CGRectDivide(containerView.bounds, &navBarFrame, &contentFrame, 44, CGRectMinYEdge);
-
   UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:navBarFrame];
-
   if (previousViewController.navigationItem && !viewController.navigationItem.hidesBackButton && !viewController.navigationItem.leftBarButtonItem && !viewController.navigationItem.leftBarButtonItems) {
     [navBar pushNavigationItem:previousViewController.navigationItem animated:NO];
     navBar.delegate = self;
   }
-  
   [navBar pushNavigationItem:viewController.navigationItem animated:NO];
   [containerView addSubview:navBar];
   viewController.view.frame = contentFrame;
