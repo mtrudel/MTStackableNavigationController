@@ -11,8 +11,15 @@
 
 @implementation MTStackableNavigationPushSegue
 
+- (id)initWithIdentifier:(NSString *)identifier source:(UIViewController *)source destination:(UIViewController *)destination {
+  if ([super initWithIdentifier:identifier source:source destination:destination]) {
+    self.isAnimated = YES;
+  }
+  return self;
+}
+
 - (void)perform {
-  [[self.sourceViewController stackableNavigationController] pushViewController:self.destinationViewController animated:YES];
+  [[self.sourceViewController stackableNavigationController] pushViewController:self.destinationViewController animated:self.isAnimated];
 }
 
 @end

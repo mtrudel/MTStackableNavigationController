@@ -8,5 +8,5 @@
 #import <UIKit/UIKit.h>
 
 @interface MTStackableNavigationPushSegue : UIStoryboardSegue
-
+@property(nonatomic) BOOL isAnimated;
 @end
