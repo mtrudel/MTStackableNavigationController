@@ -17,6 +17,14 @@
   self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 
   UIViewController *viewController = [[MTCountingViewController alloc] initWithNumber:0];
+
+  /*
+   Uncomment whichever controller you wish to use -- the semantics within the 
+   contained controllers are nearly identical (the only change is the property
+   name used to access the containing controller)
+  */
+
+  //  UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
   MTStackableNavigationController *navigationController = [[MTStackableNavigationController alloc] initWithRootViewController:viewController];
 
   self.window.rootViewController = navigationController;
