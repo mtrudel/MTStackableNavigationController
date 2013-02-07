@@ -123,8 +123,10 @@
   CGRect navBarFrame, contentFrame;
   CGRectDivide(containerView.bounds, &navBarFrame, &contentFrame, 44, CGRectMinYEdge);
   UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:navBarFrame];
-  if (previousViewController.navigationItem && !viewController.navigationItem.hidesBackButton && !viewController.navigationItem.leftBarButtonItem && !viewController.navigationItem.leftBarButtonItems) {
-    [navBar pushNavigationItem:previousViewController.navigationItem animated:NO];
+  if (previousViewController.navigationItem) {
+    UINavigationItem *previousItem = [[UINavigationItem alloc] initWithTitle:previousViewController.navigationItem.title];
+    previousItem.backBarButtonItem = previousViewController.navigationItem.backBarButtonItem;
+    [navBar pushNavigationItem:previousItem animated:NO];
     navBar.delegate = self;
   }
   [navBar pushNavigationItem:viewController.navigationItem animated:NO];
