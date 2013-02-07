@@ -120,7 +120,7 @@
 - (UIView *)containerViewForController:(UIViewController *)viewController previousController:(UIViewController *)previousViewController {
   CGRect rect = UIEdgeInsetsInsetRect(self.view.bounds, UIEdgeInsetsMake(0, previousViewController.stackableNavigationItem.leftPeek, 0, 0));
   UIView *containerView = [[UIView alloc] initWithFrame:rect];
-  CGRect navBarFrame, contentFrame;
+  CGRect navBarFrame, contentFrame, toolbarFrame;
   CGRectDivide(containerView.bounds, &navBarFrame, &contentFrame, 44, CGRectMinYEdge);
   UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:navBarFrame];
   if (previousViewController.navigationItem) {
@@ -131,6 +131,13 @@
   }
   [navBar pushNavigationItem:viewController.navigationItem animated:NO];
   [containerView addSubview:navBar];
+
+  if (viewController.toolbarItems) {
+    CGRectDivide(contentFrame, &toolbarFrame, &contentFrame, 44, CGRectMaxYEdge);
+    UIToolbar *toolbar = [[UIToolbar alloc] initWithFrame:toolbarFrame];
+    toolbar.items = viewController.toolbarItems;
+    [containerView addSubview:toolbar];
+  }
   viewController.view.frame = contentFrame;
   [containerView addSubview:viewController.view];
   return containerView;
