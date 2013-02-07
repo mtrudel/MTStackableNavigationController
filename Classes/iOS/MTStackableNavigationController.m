@@ -106,6 +106,7 @@
     while (self.topViewController != viewController) {
       [popped insertObject:[self popViewControllerAnimated:animated] atIndex:0];
     }
+    return popped;
   } else {
     return nil; // TODO -- test this for compat with UINC
   }
