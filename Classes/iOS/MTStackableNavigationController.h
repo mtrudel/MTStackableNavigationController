@@ -13,6 +13,7 @@
 
 @interface MTStackableNavigationController : UIViewController
 @property(nonatomic, readonly) NSArray *viewControllers;
+@property(nonatomic, readonly) UIViewController *topViewController;
 @property(nonatomic, assign) id<MTStackableNavigationControllerDelegate> delegate;
 
 - (id)initWithRootViewController:(UIViewController *)rootViewController;
@@ -22,7 +23,6 @@
 - (NSArray *)popToViewController:(UIViewController *)viewController animated:(BOOL)animated;
 - (NSArray *)popToRootViewControllerAnimated:(BOOL)animated;
 
-@property(nonatomic,readonly,retain) UIViewController *topViewController; // The top view controller on the stack.
 @end
 
 
