@@ -11,6 +11,9 @@
 #import "MTCountingViewController.h"
 #import "MTStackableNavigationController.h"
 
+@interface MTAppDelegate () <MTStackableNavigationControllerDelegate, UINavigationControllerDelegate>
+
+@end
 @implementation MTAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
@@ -24,12 +27,29 @@
    name used to access the containing controller)
   */
 
-  //  UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
+//  UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
   MTStackableNavigationController *navigationController = [[MTStackableNavigationController alloc] initWithRootViewController:viewController];
+  navigationController.delegate = self;
 
   self.window.rootViewController = navigationController;
   [self.window makeKeyAndVisible];
   return YES;
+}
+
+- (void)stackableNavigationController:(MTStackableNavigationController *)stackableNavigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
+  NSLog(@"delegate received willShow");
+}
+
+- (void)stackableNavigationController:(MTStackableNavigationController *)stackableNavigationController didShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
+  NSLog(@"delegate received didShow");
+}
+
+- (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
+  NSLog(@"delegate received willShow");
+}
+
+- (void)navigationController:(UINavigationController *)navigationController didShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
+  NSLog(@"delegate received didShow");
 }
 
 @end
