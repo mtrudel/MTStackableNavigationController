@@ -9,8 +9,9 @@
 #import "UIViewController+MTStackableNavigationController.h"
 #import "MTStackableNavigationItem.h"
 
-@interface MTStackableNavigationController : UIViewController <UINavigationBarDelegate>
 @protocol MTStackableNavigationControllerDelegate;
+
+@interface MTStackableNavigationController : UIViewController
 @property(nonatomic, readonly) NSArray *viewControllers;
 @property(nonatomic, assign) id<MTStackableNavigationControllerDelegate> delegate;
 
