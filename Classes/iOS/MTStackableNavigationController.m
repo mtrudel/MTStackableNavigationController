@@ -46,6 +46,9 @@
     [currentController beginAppearanceTransition:NO animated:animated];
   }
   [viewController beginAppearanceTransition:YES animated:animated];
+  if ([self.delegate respondsToSelector:@selector(stackableNavigationController:willShowViewController:animated:)]) {
+    [self.delegate stackableNavigationController:self willShowViewController:viewController animated:animated];
+  }
   UIView *newContainerView = [self containerViewForController:viewController previousController:currentController];
   if (animated) {
     CGRect newContainerFinalFrame = newContainerView.frame;
@@ -65,6 +68,9 @@
       }
       [viewController endAppearanceTransition];
       [viewController didMoveToParentViewController:self];
+      if ([self.delegate respondsToSelector:@selector(stackableNavigationController:didShowViewController:animated:)]) {
+        [self.delegate stackableNavigationController:self didShowViewController:viewController animated:animated];
+      }
     }];
   } else {
     if (currentController.stackableNavigationItem.leftPeek != 0) {
@@ -77,6 +83,9 @@
     [self.view addSubview:newContainerView];
     [viewController endAppearanceTransition];
     [viewController didMoveToParentViewController:self];
+    if ([self.delegate respondsToSelector:@selector(stackableNavigationController:didShowViewController:animated:)]) {
+      [self.delegate stackableNavigationController:self didShowViewController:viewController animated:animated];
+    }
   }
 }
 
@@ -87,6 +96,9 @@
     [currentController willMoveToParentViewController:nil];
     [currentController beginAppearanceTransition:NO animated:animated];
     [revealedController beginAppearanceTransition:YES animated:animated];
+    if ([self.delegate respondsToSelector:@selector(stackableNavigationController:willShowViewController:animated:)]) {
+      [self.delegate stackableNavigationController:self willShowViewController:revealedController animated:animated];
+    }
     if (animated) {
       [self addShadowToView:currentController.view.superview];
       [UIView animateWithDuration:kPopAnimationDuration animations:^{
@@ -95,13 +107,13 @@
           revealedController.view.superview.frame = CGRectOffset(revealedController.view.superview.frame, self.view.bounds.size.width / kCoveredControllerWidthDivisor, 0);
         }
       } completion:^(BOOL finished) {
-        [self handleControllerRemoval:currentController parentController:revealedController];
+        [self handleControllerRemoval:currentController parentController:revealedController animated:YES];
       }];
     } else {
       if (revealedController.stackableNavigationItem.leftPeek == 0) {
         revealedController.view.superview.frame = CGRectOffset(revealedController.view.superview.frame, self.view.bounds.size.width / kCoveredControllerWidthDivisor, 0);
       }
-      [self handleControllerRemoval:currentController parentController:revealedController];
+      [self handleControllerRemoval:currentController parentController:revealedController animated:NO];
     }
     return currentController;
   } else {
@@ -167,13 +179,16 @@
   view.layer.shadowPath = NULL;
 }
 
-- (void)handleControllerRemoval:(UIViewController *)oldController parentController:(UIViewController *)revealedController {
+- (void)handleControllerRemoval:(UIViewController *)oldController parentController:(UIViewController *)revealedController animated:(BOOL)animated {
   [oldController.view.superview removeFromSuperview];
   [oldController setStackableNavigationController:nil];
   [oldController endAppearanceTransition];
   [oldController removeFromParentViewController];
   [revealedController endAppearanceTransition];
   [revealedController didMoveToParentViewController:self];
+  if ([self.delegate respondsToSelector:@selector(stackableNavigationController:didShowViewController:animated:)]) {
+    [self.delegate stackableNavigationController:self didShowViewController:revealedController animated:animated];
+  }
 }
 
 - (BOOL)navigationBar:(UINavigationBar *)navigationBar shouldPopItem:(UINavigationItem *)item {
