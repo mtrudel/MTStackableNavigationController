@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
                     style interaction are already done well by other controllers.
                    DESC
   s.homepage     = "https://github.com/mtrudel/MTStackableNavigationController"
-  s.license      = 'BSD'
+  s.license      = 'MIT'
   s.author       = { "Mat Trudel" => "mat@geeky.net" }
   s.source       = { :git => "https://github.com/mtrudel/MTStackableNavigationController.git", :tag => "0.1.0" }
   s.platform     = :ios, '5.0'
