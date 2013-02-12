@@ -12,5 +12,5 @@
 
 @interface UIViewController (MTStackableNavigationController)
 @property(nonatomic,readonly,strong) MTStackableNavigationController *stackableNavigationController;
-@property(nonatomic, strong) MTStackableNavigationItem *stackableNavigationItem;
+@property(nonatomic,readonly,strong) MTStackableNavigationItem *stackableNavigationItem;
 @end

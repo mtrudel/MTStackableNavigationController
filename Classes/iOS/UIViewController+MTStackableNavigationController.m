@@ -38,8 +38,4 @@ static void * const kStackableNavigationItemStorageKey = (void*)&kStackableNavig
   return result;
 }
 
-- (void)setStackableNavigationItem:(MTStackableNavigationItem *)stackableNavigationItem {
-  objc_setAssociatedObject(self, kStackableNavigationItemStorageKey, stackableNavigationItem, OBJC_ASSOCIATION_RETAIN);
-}
-
 @end
