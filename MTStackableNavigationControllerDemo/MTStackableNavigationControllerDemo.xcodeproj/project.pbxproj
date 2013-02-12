@@ -25,14 +25,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		407FB97116C44731001BF085 /* StackableNavigationControllerDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StackableNavigationControllerDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		407FB97116C44731001BF085 /* MTStackableNavigationControllerDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MTStackableNavigationControllerDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		407FB97416C44731001BF085 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		407FB97616C44731001BF085 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		407FB97816C44731001BF085 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		407FB97C16C44731001BF085 /* StackableNavigationControllerDemo-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "StackableNavigationControllerDemo-Info.plist"; sourceTree = "<group>"; };
+		407FB97C16C44731001BF085 /* MTStackableNavigationControllerDemo-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MTStackableNavigationControllerDemo-Info.plist"; sourceTree = "<group>"; };
 		407FB97E16C44731001BF085 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		407FB98016C44731001BF085 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		407FB98216C44731001BF085 /* StackableNavigationControllerDemo-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "StackableNavigationControllerDemo-Prefix.pch"; sourceTree = "<group>"; };
+		407FB98216C44731001BF085 /* MTStackableNavigationControllerDemo-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MTStackableNavigationControllerDemo-Prefix.pch"; sourceTree = "<group>"; };
 		407FB98316C44731001BF085 /* MTAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTAppDelegate.h; sourceTree = "<group>"; };
 		407FB98416C44731001BF085 /* MTAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MTAppDelegate.m; sourceTree = "<group>"; };
 		407FB98616C44731001BF085 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
@@ -69,8 +69,8 @@
 		407FB96816C44731001BF085 = {
 			isa = PBXGroup;
 			children = (
-				407FB99116C44753001BF085 /* StackableNavigationController */,
-				407FB97A16C44731001BF085 /* StackableNavigationControllerDemo */,
+				407FB99116C44753001BF085 /* MTStackableNavigationController */,
+				407FB97A16C44731001BF085 /* MTStackableNavigationControllerDemo */,
 				407FB97316C44731001BF085 /* Frameworks */,
 				407FB97216C44731001BF085 /* Products */,
 			);
@@ -79,7 +79,7 @@
 		407FB97216C44731001BF085 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				407FB97116C44731001BF085 /* StackableNavigationControllerDemo.app */,
+				407FB97116C44731001BF085 /* MTStackableNavigationControllerDemo.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -94,7 +94,7 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		407FB97A16C44731001BF085 /* StackableNavigationControllerDemo */ = {
+		407FB97A16C44731001BF085 /* MTStackableNavigationControllerDemo */ = {
 			isa = PBXGroup;
 			children = (
 				407FB98316C44731001BF085 /* MTAppDelegate.h */,
@@ -104,16 +104,16 @@
 				407FB9A116C44804001BF085 /* MTCountingViewController.xib */,
 				407FB97B16C44731001BF085 /* Supporting Files */,
 			);
-			path = StackableNavigationControllerDemo;
+			path = MTStackableNavigationControllerDemo;
 			sourceTree = "<group>";
 		};
 		407FB97B16C44731001BF085 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				407FB97C16C44731001BF085 /* StackableNavigationControllerDemo-Info.plist */,
+				407FB97C16C44731001BF085 /* MTStackableNavigationControllerDemo-Info.plist */,
 				407FB97D16C44731001BF085 /* InfoPlist.strings */,
 				407FB98016C44731001BF085 /* main.m */,
-				407FB98216C44731001BF085 /* StackableNavigationControllerDemo-Prefix.pch */,
+				407FB98216C44731001BF085 /* MTStackableNavigationControllerDemo-Prefix.pch */,
 				407FB98616C44731001BF085 /* Default.png */,
 				407FB98816C44731001BF085 /* Default@2x.png */,
 				407FB98A16C44731001BF085 /* Default-568h@2x.png */,
@@ -121,7 +121,7 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		407FB99116C44753001BF085 /* StackableNavigationController */ = {
+		407FB99116C44753001BF085 /* MTStackableNavigationController */ = {
 			isa = PBXGroup;
 			children = (
 				407FB99216C44753001BF085 /* MTStackableNavigationController.h */,
@@ -134,16 +134,16 @@
 				407FB99916C44753001BF085 /* UIViewController+MTStackableNavigationController.m */,
 				407FB99A16C44753001BF085 /* UIViewController+MTStackableNavigationController_Protected.h */,
 			);
-			name = StackableNavigationController;
+			name = MTStackableNavigationController;
 			path = ../Classes/iOS;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		407FB97016C44731001BF085 /* StackableNavigationControllerDemo */ = {
+		407FB97016C44731001BF085 /* MTStackableNavigationControllerDemo */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 407FB98E16C44731001BF085 /* Build configuration list for PBXNativeTarget "StackableNavigationControllerDemo" */;
+			buildConfigurationList = 407FB98E16C44731001BF085 /* Build configuration list for PBXNativeTarget "MTStackableNavigationControllerDemo" */;
 			buildPhases = (
 				407FB96D16C44731001BF085 /* Sources */,
 				407FB96E16C44731001BF085 /* Frameworks */,
@@ -153,9 +153,9 @@
 			);
 			dependencies = (
 			);
-			name = StackableNavigationControllerDemo;
-			productName = StackableNavigationControllerDemo;
-			productReference = 407FB97116C44731001BF085 /* StackableNavigationControllerDemo.app */;
+			name = MTStackableNavigationControllerDemo;
+			productName = MTStackableNavigationControllerDemo;
+			productReference = 407FB97116C44731001BF085 /* MTStackableNavigationControllerDemo.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -168,7 +168,7 @@
 				LastUpgradeCheck = 0460;
 				ORGANIZATIONNAME = "Mat Trudel";
 			};
-			buildConfigurationList = 407FB96C16C44731001BF085 /* Build configuration list for PBXProject "StackableNavigationControllerDemo" */;
+			buildConfigurationList = 407FB96C16C44731001BF085 /* Build configuration list for PBXProject "MTStackableNavigationControllerDemo" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -180,7 +180,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				407FB97016C44731001BF085 /* StackableNavigationControllerDemo */,
+				407FB97016C44731001BF085 /* MTStackableNavigationControllerDemo */,
 			);
 		};
 /* End PBXProject section */
@@ -289,10 +289,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "StackableNavigationControllerDemo/StackableNavigationControllerDemo-Prefix.pch";
-				INFOPLIST_FILE = "StackableNavigationControllerDemo/StackableNavigationControllerDemo-Info.plist";
+				GCC_PREFIX_HEADER = "MTStackableNavigationControllerDemo/MTStackableNavigationControllerDemo-Prefix.pch";
+				INFOPLIST_FILE = "$(SRCROOT)/MTStackableNavigationControllerDemo/MTStackableNavigationControllerDemo-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = MTStackableNavigationControllerDemo;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -301,10 +301,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "StackableNavigationControllerDemo/StackableNavigationControllerDemo-Prefix.pch";
-				INFOPLIST_FILE = "StackableNavigationControllerDemo/StackableNavigationControllerDemo-Info.plist";
+				GCC_PREFIX_HEADER = "MTStackableNavigationControllerDemo/MTStackableNavigationControllerDemo-Prefix.pch";
+				INFOPLIST_FILE = "$(SRCROOT)/MTStackableNavigationControllerDemo/MTStackableNavigationControllerDemo-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = MTStackableNavigationControllerDemo;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -312,7 +312,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		407FB96C16C44731001BF085 /* Build configuration list for PBXProject "StackableNavigationControllerDemo" */ = {
+		407FB96C16C44731001BF085 /* Build configuration list for PBXProject "MTStackableNavigationControllerDemo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				407FB98C16C44731001BF085 /* Debug */,
@@ -321,13 +321,14 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		407FB98E16C44731001BF085 /* Build configuration list for PBXNativeTarget "StackableNavigationControllerDemo" */ = {
+		407FB98E16C44731001BF085 /* Build configuration list for PBXNativeTarget "MTStackableNavigationControllerDemo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				407FB98F16C44731001BF085 /* Debug */,
 				407FB99016C44731001BF085 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
