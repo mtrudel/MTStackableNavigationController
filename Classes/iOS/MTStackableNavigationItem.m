@@ -5,7 +5,7 @@
 //  Copyright (c) 2013 Mat Trudel. All rights reserved.
 //
 
-#import "MTStackableNavigationItem.h"
+#import "MTStackableNavigationItem_Protected.h"
 
 @implementation MTStackableNavigationItem
 
