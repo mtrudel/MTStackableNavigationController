@@ -26,7 +26,7 @@ static void * const kStackableNavigationItemStorageKey = (void*)&kStackableNavig
 }
 
 - (void)setStackableNavigationController:(MTStackableNavigationController *)stackableNavigationController {
-  objc_setAssociatedObject(self, kStackableNavigationControllerStorageKey, stackableNavigationController, OBJC_ASSOCIATION_RETAIN);
+  objc_setAssociatedObject(self, kStackableNavigationControllerStorageKey, stackableNavigationController, OBJC_ASSOCIATION_ASSIGN);
 }
 
 - (MTStackableNavigationItem *)stackableNavigationItem {
