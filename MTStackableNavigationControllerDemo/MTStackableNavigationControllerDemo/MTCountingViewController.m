@@ -35,13 +35,20 @@
   if (self.navigationController) {
     [self.navigationController pushViewController:viewController animated:YES];
   } else {
+    self.stackableNavigationItem.leftPeek = 0;
     [self.stackableNavigationController pushViewController:viewController animated:YES];
   }
 }
 
 - (IBAction)pushIncrementedControllerWithPeek:(id)sender {
-  self.stackableNavigationItem.leftPeek = 20;
-  [self pushIncrementedController:sender];
+  MTCountingViewController *viewController = [[MTCountingViewController alloc] initWithNumber:self.number + 1];
+
+  if (self.navigationController) {
+    [self.navigationController pushViewController:viewController animated:YES];
+  } else {
+    self.stackableNavigationItem.leftPeek = 20;
+    [self.stackableNavigationController pushViewController:viewController animated:YES];
+  }
 }
 
 #pragma mark - Notification messages for various events - use these to verify adherence to UINavigationController semantics
