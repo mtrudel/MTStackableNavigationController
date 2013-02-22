@@ -9,5 +9,6 @@
 
 @interface MTStackableNavigationItem ()
 @property(nonatomic,strong) UIView *containerView;
-
+@property(nonatomic) BOOL appearanceCleanupPending;
+@property(nonatomic) BOOL disappearanceCleanupPending;
 @end
