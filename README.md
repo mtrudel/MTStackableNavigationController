@@ -5,7 +5,8 @@
 navigation. In contrast to most of the other view controller projects based on
 this paradigm, `MTStackableNavigationController` is targeted exclusively for use
 as a direct replacement for `UINavigationController`; layered navigation and
-deck style interaction are already done well by other controllers.
+deck style interaction are already done well by other controllers and I see no
+reason to reinvent the wheel in that respect.
 
 `MTStackableNavigationController` does some cool things:
 
@@ -19,22 +20,18 @@ deck style interaction are already done well by other controllers.
   to `self.stackedNavigationController`). The API methods (and the calling sequence of
   the various view lifecycle messages such as `viewWillAppear` et al.) are
   identical to those of `UINavigationController`.
-* View controllers can customize their presentation by configuring their `stackableNavigationItem` property.
+* View controllers can customize various aspects of their presentation by
+  configuring their `stackableNavigationItem` property.
 
 `MTStackableNavigationController` is still under active development and
 a number of features aren't done yet (but they will be soon). A rough plan of
 the near future looks like this:
 
-### Planned for 0.2
-
-* Gesture support (along with configuration parameters to control it)
-
 ### Planned for 0.3
 
+* Support for configuring the navigation bar (including tints and other appearance hints)
 * Better support for toolbars on contained view controllers
 * More complete support for seldom used properties of `navigationItem`
-* Comprehensive test suite to stay in lock-step with subtle timing changes of
-  view lifecycle messages in `UINavigationController`
 
 ### Planned for 0.4
 
@@ -47,11 +44,8 @@ the near future looks like this:
 
 ### Planned for 0.5
 
-* Closer adherence to off-screen call semantics of `UINavigationController`,
-  which does some fanciness to ensure that lifecycle messages aren't improperly sent
-  during controller setup while the controller hasn't been added to the
-  on-screen hierarchy yet. Implementing this isn't entirely trivial (and is
-  a low priority for me ATM) so I'm holding off on it until later.
+* Comprehensive test suite to stay in lock-step with subtle timing changes of
+  view lifecycle messages in `UINavigationController`
 
 ## Supported Platforms
 
