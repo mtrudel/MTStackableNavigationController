@@ -14,6 +14,10 @@
 #define kAnimationDuration 0.3
 #define kCoveredControllerWidthDivisor 2
 #define kContainerViewShadowWidth 15
+#define kPanGesturePercentageToInducePop 0.57
+
+@interface MTStackableNavigationController () <UIGestureRecognizerDelegate>
+@end
 
 @implementation MTStackableNavigationController
 
@@ -194,6 +198,7 @@
     [UIView animateWithDuration:kAnimationDuration animations:^{
       [self layoutViewControllersToFinalStateForRemovalImmediate:toRemove isPush:isPush];
       [self layoutViewControllersToFinalStateImmediate:expectedHierarchy];
+      [self addGestureRecognizersToViews:expectedHierarchy];
     } completion:^(BOOL finished) {
       [self removeViewControllersFromViewHierarchyImmediate:toRemove];
       completion();
@@ -298,6 +303,67 @@
     viewController.stackableNavigationItem.containerView.layer.shadowOpacity = 0.5;
     viewController.stackableNavigationItem.containerView.layer.shadowPath = [UIBezierPath bezierPathWithRect:viewController.stackableNavigationItem.containerView.bounds].CGPath;
   }
+}
+
+#pragma mark -- Gesture management
+
+- (void)addGestureRecognizersToViews:(NSArray *)viewControllers {
+  for (UIViewController *viewController in viewControllers) {
+    for (UIGestureRecognizer *gestureRecognizer in [viewController.stackableNavigationItem.containerView.gestureRecognizers copy]) {
+      [viewController.stackableNavigationItem.containerView removeGestureRecognizer:gestureRecognizer];
+    }
+    if (viewController == [viewControllers lastObject]) {
+      if (viewController.stackableNavigationItem.shouldRecognizePans && [self ancestorViewControllerTo:viewController].stackableNavigationItem.leftPeek > 0) {
+        UIPanGestureRecognizer *gestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(viewDidPan:)];
+        gestureRecognizer.delegate = self;
+        [viewController.stackableNavigationItem.containerView addGestureRecognizer:gestureRecognizer];
+      }
+    } else if (viewController.stackableNavigationItem.shouldPopOnTapWhenPeeking) {
+      UITapGestureRecognizer *gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewDidTap:)];
+      [viewController.stackableNavigationItem.containerView addGestureRecognizer:gestureRecognizer];
+    }
+  }
+}
+
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+  static Class reorderControlClass;
+  if (!reorderControlClass) {
+    reorderControlClass = NSClassFromString(@"UITableViewCellReorderControl");
+  }
+  return ![touch.view isKindOfClass:[UISlider class]] && ![touch.view isKindOfClass:reorderControlClass];
+}
+
+- (void)viewDidPan:(id)sender {
+  UIPanGestureRecognizer *gestureRecognizer = sender;
+  UIViewController *pannedViewController = self.childViewControllers[[self.childViewControllers indexOfObjectPassingTest:^BOOL(UIViewController *cur, NSUInteger idx, BOOL *stop) {
+    return cur.stackableNavigationItem.containerView == [sender view];
+  }]];
+
+  if (gestureRecognizer.state == UIGestureRecognizerStateEnded) {
+    if (pannedViewController.stackableNavigationItem.shouldPopWhenPannedToRight && [gestureRecognizer translationInView:self.view].x >= [sender view].frame.size.width * kPanGesturePercentageToInducePop) {
+      [self popToViewController:[self ancestorViewControllerTo:pannedViewController] animated:YES];
+    } else {
+      CGRect finalFrame = pannedViewController.stackableNavigationItem.containerView.frame;
+      finalFrame.origin.x = [self ancestorViewControllerTo:pannedViewController].stackableNavigationItem.leftPeek;
+      [UIView animateWithDuration:0.3 animations:^{
+        pannedViewController.stackableNavigationItem.containerView.frame = finalFrame;
+      }];
+    }
+  } else if (gestureRecognizer.state == UIGestureRecognizerStateChanged) {
+    CGRect finalFrame = pannedViewController.stackableNavigationItem.containerView.frame;
+    finalFrame.origin.x = [self ancestorViewControllerTo:pannedViewController].stackableNavigationItem.leftPeek + MAX([gestureRecognizer translationInView:self.view].x, 0);
+    [UIView animateWithDuration:0.1 animations:^{
+      pannedViewController.stackableNavigationItem.containerView.frame = finalFrame;
+    }];
+  }
+}
+
+- (void)viewDidTap:(id)sender {
+  UIViewController *viewController = self.childViewControllers[[self.childViewControllers indexOfObjectPassingTest:^BOOL(UIViewController *cur, NSUInteger idx, BOOL *stop) {
+    return cur.stackableNavigationItem.containerView == [sender view];
+  }]];
+  [self popToViewController:viewController animated:YES];
 }
 
 #pragma mark - Delegate methods

@@ -9,4 +9,13 @@
 
 @implementation MTStackableNavigationItem
 
+- (id)init {
+  if (self = [super init]) {
+    self.shouldPopOnTapWhenPeeking = YES;
+    self.shouldRecognizePans = YES;
+    self.shouldPopWhenPannedToRight = YES;
+  }
+  return self;
+}
+
 @end
