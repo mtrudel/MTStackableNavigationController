@@ -360,10 +360,13 @@
 }
 
 - (void)viewDidTap:(id)sender {
-  UIViewController *viewController = self.childViewControllers[[self.childViewControllers indexOfObjectPassingTest:^BOOL(UIViewController *cur, NSUInteger idx, BOOL *stop) {
-    return cur.stackableNavigationItem.containerView == [sender view];
-  }]];
-  [self popToViewController:viewController animated:YES];
+  UITapGestureRecognizer *gestureRecognizer = sender;
+  if (gestureRecognizer.state == UIGestureRecognizerStateEnded) {
+    UIViewController *viewController = self.childViewControllers[[self.childViewControllers indexOfObjectPassingTest:^BOOL(UIViewController *cur, NSUInteger idx, BOOL *stop) {
+      return cur.stackableNavigationItem.containerView == [sender view];
+    }]];
+    [self popToViewController:viewController animated:YES];
+  }
 }
 
 #pragma mark - Delegate methods
