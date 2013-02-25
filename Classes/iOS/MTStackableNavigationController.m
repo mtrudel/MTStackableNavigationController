@@ -313,12 +313,18 @@
       [viewController.stackableNavigationItem.containerView removeGestureRecognizer:gestureRecognizer];
     }
     if (viewController == [viewControllers lastObject]) {
+      for (UIView *view in viewController.stackableNavigationItem.containerView.subviews) {
+        view.userInteractionEnabled = YES;
+      }
       if (viewController.stackableNavigationItem.shouldRecognizePans && [self ancestorViewControllerTo:viewController].stackableNavigationItem.leftPeek > 0) {
         UIPanGestureRecognizer *gestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(viewDidPan:)];
         gestureRecognizer.delegate = self;
         [viewController.stackableNavigationItem.containerView addGestureRecognizer:gestureRecognizer];
       }
     } else if (viewController.stackableNavigationItem.shouldPopOnTapWhenPeeking) {
+      for (UIView *view in viewController.stackableNavigationItem.containerView.subviews) {
+        view.userInteractionEnabled = NO;
+      }
       UITapGestureRecognizer *gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewDidTap:)];
       [viewController.stackableNavigationItem.containerView addGestureRecognizer:gestureRecognizer];
     }
