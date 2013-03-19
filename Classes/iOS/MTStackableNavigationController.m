@@ -14,7 +14,7 @@
 #define kAnimationDuration 0.3
 #define kCoveredControllerWidthDivisor 2
 #define kContainerViewShadowWidth 15
-#define kPanGesturePercentageToInducePop 0.57
+#define kPanGesturePercentageToInducePop 0.5
 
 @interface MTStackableNavigationController () <UIGestureRecognizerDelegate>
 @end

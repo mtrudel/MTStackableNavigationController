@@ -31,7 +31,7 @@
 
 /**
  * Whether this this view should pop itself off the stack if it is panned
- * far enough to the right ('far enough' means more than 57% of the width of
+ * far enough to the right ('far enough' means more than 50% of the width of
  * this view). Has no effect if shouldRecognizePans is NO. Defaults to YES.
  */
 @property(nonatomic) BOOL shouldPopWhenPannedToRight;
