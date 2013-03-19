@@ -10,6 +10,7 @@
 #import "MTStackableNavigationController.h"
 #import "MTStackableNavigationItem_Protected.h"
 #import "UIViewController+MTStackableNavigationController_Protected.h"
+#import "NSArray+MTCollectionOperators.h"
 
 #define kAnimationDuration 0.3
 #define kCoveredControllerWidthDivisor 2
@@ -111,8 +112,7 @@
 }
 
 - (NSArray *)expectedVisibleViewControllersWithPendingRemovals:(NSArray *)pendingRemovals {
-  NSMutableArray *viewControllers = [self.childViewControllers mutableCopy];
-  [viewControllers removeObjectsInArray:pendingRemovals];
+  NSArray *viewControllers = [self.childViewControllers subtractValuesIn:pendingRemovals];
   if ([[[self ancestorViewControllerTo:[viewControllers lastObject]] stackableNavigationItem] leftPeek] != 0) {
     return @[[self ancestorViewControllerTo:[viewControllers lastObject]], [viewControllers lastObject]];
   } else {
@@ -150,12 +150,9 @@
   if (self.isViewLoaded) {
     NSArray *expectedHierarchy = [self expectedVisibleViewControllersWithPendingRemovals:pendingRemovals];
     NSArray *currentHierarchy = [self currentlyVisibleViewControllers];
-    NSMutableArray *toRemove = [currentHierarchy mutableCopy];
-    [toRemove removeObjectsInArray:expectedHierarchy];
-    NSMutableArray *toUpdate = [currentHierarchy mutableCopy];
-    [toUpdate removeObjectsInArray:toRemove];
-    NSMutableArray *toInsert = [expectedHierarchy mutableCopy];
-    [toInsert removeObjectsInArray:currentHierarchy];
+    NSArray *toRemove = [currentHierarchy subtractValuesIn:expectedHierarchy];
+    NSArray *toUpdate = [currentHierarchy subtractValuesIn:toRemove];
+    NSArray *toInsert = [expectedHierarchy subtractValuesIn:currentHierarchy];
 
     // Load the new views (induce loadView if needed)
     for (UIViewController *viewController in toInsert) {

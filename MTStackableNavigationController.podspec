@@ -18,4 +18,5 @@ Pod::Spec.new do |s|
   s.source_files = 'Classes', 'Classes/**/*.{h,m}'
   s.framework    = 'QuartzCore'
   s.requires_arc = true
+  s.dependency     'MTCollectionOperators', '~> 0'
 end
