@@ -16,15 +16,14 @@
 		407FB98716C44731001BF085 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 407FB98616C44731001BF085 /* Default.png */; };
 		407FB98916C44731001BF085 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 407FB98816C44731001BF085 /* Default@2x.png */; };
 		407FB98B16C44731001BF085 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 407FB98A16C44731001BF085 /* Default-568h@2x.png */; };
-		407FB99B16C44753001BF085 /* MTStackableNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 407FB99316C44753001BF085 /* MTStackableNavigationController.m */; };
-		407FB99C16C44753001BF085 /* MTStackableNavigationItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 407FB99516C44753001BF085 /* MTStackableNavigationItem.m */; };
-		407FB99D16C44753001BF085 /* MTStackableNavigationPushSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 407FB99716C44753001BF085 /* MTStackableNavigationPushSegue.m */; };
-		407FB99E16C44753001BF085 /* UIViewController+MTStackableNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 407FB99916C44753001BF085 /* UIViewController+MTStackableNavigationController.m */; };
 		407FB9A216C44804001BF085 /* MTCountingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 407FB9A016C44804001BF085 /* MTCountingViewController.m */; };
 		407FB9A316C44804001BF085 /* MTCountingViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 407FB9A116C44804001BF085 /* MTCountingViewController.xib */; };
+		86C3346993C540CBA53606D2 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 396B7677C0DD420397594431 /* libPods.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0C1B2A546A78473F8647218B /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = SOURCE_ROOT; };
+		396B7677C0DD420397594431 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		407FB97116C44731001BF085 /* MTStackableNavigationControllerDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MTStackableNavigationControllerDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		407FB97416C44731001BF085 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		407FB97616C44731001BF085 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -38,15 +37,6 @@
 		407FB98616C44731001BF085 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		407FB98816C44731001BF085 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		407FB98A16C44731001BF085 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
-		407FB99216C44753001BF085 /* MTStackableNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTStackableNavigationController.h; sourceTree = "<group>"; };
-		407FB99316C44753001BF085 /* MTStackableNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MTStackableNavigationController.m; sourceTree = "<group>"; };
-		407FB99416C44753001BF085 /* MTStackableNavigationItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTStackableNavigationItem.h; sourceTree = "<group>"; };
-		407FB99516C44753001BF085 /* MTStackableNavigationItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MTStackableNavigationItem.m; sourceTree = "<group>"; };
-		407FB99616C44753001BF085 /* MTStackableNavigationPushSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTStackableNavigationPushSegue.h; sourceTree = "<group>"; };
-		407FB99716C44753001BF085 /* MTStackableNavigationPushSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MTStackableNavigationPushSegue.m; sourceTree = "<group>"; };
-		407FB99816C44753001BF085 /* UIViewController+MTStackableNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+MTStackableNavigationController.h"; sourceTree = "<group>"; };
-		407FB99916C44753001BF085 /* UIViewController+MTStackableNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+MTStackableNavigationController.m"; sourceTree = "<group>"; };
-		407FB99A16C44753001BF085 /* UIViewController+MTStackableNavigationController_Protected.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+MTStackableNavigationController_Protected.h"; sourceTree = "<group>"; };
 		407FB99F16C44804001BF085 /* MTCountingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTCountingViewController.h; sourceTree = "<group>"; };
 		407FB9A016C44804001BF085 /* MTCountingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MTCountingViewController.m; sourceTree = "<group>"; };
 		407FB9A116C44804001BF085 /* MTCountingViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MTCountingViewController.xib; sourceTree = "<group>"; };
@@ -60,6 +50,7 @@
 				407FB97516C44731001BF085 /* UIKit.framework in Frameworks */,
 				407FB97716C44731001BF085 /* Foundation.framework in Frameworks */,
 				407FB97916C44731001BF085 /* CoreGraphics.framework in Frameworks */,
+				86C3346993C540CBA53606D2 /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -69,10 +60,10 @@
 		407FB96816C44731001BF085 = {
 			isa = PBXGroup;
 			children = (
-				407FB99116C44753001BF085 /* MTStackableNavigationController */,
 				407FB97A16C44731001BF085 /* MTStackableNavigationControllerDemo */,
 				407FB97316C44731001BF085 /* Frameworks */,
 				407FB97216C44731001BF085 /* Products */,
+				0C1B2A546A78473F8647218B /* Pods.xcconfig */,
 			);
 			sourceTree = "<group>";
 		};
@@ -90,6 +81,7 @@
 				407FB97416C44731001BF085 /* UIKit.framework */,
 				407FB97616C44731001BF085 /* Foundation.framework */,
 				407FB97816C44731001BF085 /* CoreGraphics.framework */,
+				396B7677C0DD420397594431 /* libPods.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -121,23 +113,6 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		407FB99116C44753001BF085 /* MTStackableNavigationController */ = {
-			isa = PBXGroup;
-			children = (
-				407FB99216C44753001BF085 /* MTStackableNavigationController.h */,
-				407FB99316C44753001BF085 /* MTStackableNavigationController.m */,
-				407FB99416C44753001BF085 /* MTStackableNavigationItem.h */,
-				407FB99516C44753001BF085 /* MTStackableNavigationItem.m */,
-				407FB99616C44753001BF085 /* MTStackableNavigationPushSegue.h */,
-				407FB99716C44753001BF085 /* MTStackableNavigationPushSegue.m */,
-				407FB99816C44753001BF085 /* UIViewController+MTStackableNavigationController.h */,
-				407FB99916C44753001BF085 /* UIViewController+MTStackableNavigationController.m */,
-				407FB99A16C44753001BF085 /* UIViewController+MTStackableNavigationController_Protected.h */,
-			);
-			name = MTStackableNavigationController;
-			path = ../Classes/iOS;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -148,6 +123,7 @@
 				407FB96D16C44731001BF085 /* Sources */,
 				407FB96E16C44731001BF085 /* Frameworks */,
 				407FB96F16C44731001BF085 /* Resources */,
+				99D31E497FDE4CCE92F6B058 /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -200,6 +176,23 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		99D31E497FDE4CCE92F6B058 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Pods-resources.sh\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		407FB96D16C44731001BF085 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -207,10 +200,6 @@
 			files = (
 				407FB98116C44731001BF085 /* main.m in Sources */,
 				407FB98516C44731001BF085 /* MTAppDelegate.m in Sources */,
-				407FB99B16C44753001BF085 /* MTStackableNavigationController.m in Sources */,
-				407FB99C16C44753001BF085 /* MTStackableNavigationItem.m in Sources */,
-				407FB99D16C44753001BF085 /* MTStackableNavigationPushSegue.m in Sources */,
-				407FB99E16C44753001BF085 /* UIViewController+MTStackableNavigationController.m in Sources */,
 				407FB9A216C44804001BF085 /* MTCountingViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -287,6 +276,7 @@
 		};
 		407FB98F16C44731001BF085 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0C1B2A546A78473F8647218B /* Pods.xcconfig */;
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MTStackableNavigationControllerDemo/MTStackableNavigationControllerDemo-Prefix.pch";
@@ -299,6 +289,7 @@
 		};
 		407FB99016C44731001BF085 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0C1B2A546A78473F8647218B /* Pods.xcconfig */;
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MTStackableNavigationControllerDemo/MTStackableNavigationControllerDemo-Prefix.pch";

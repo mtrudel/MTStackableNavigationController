@@ -1,0 +1,18 @@
+
+PODS:
+- MTCollectionOperators (0.1.0)
+- MTStackableNavigationController (0.2.1):
+  - MTCollectionOperators (~> 0)
+
+DEPENDENCIES:
+- MTStackableNavigationController (from `..')
+
+EXTERNAL SOURCES:
+  MTStackableNavigationController:
+    :local: ..
+
+SPEC CHECKSUMS:
+  MTCollectionOperators: 34588ef0ff23b37a8023a29b398ddc067fd1575f
+  MTStackableNavigationController: f2dd7ad45cc091996dcd0ef43fb7c01fecc0cc76
+
+COCOAPODS: 0.16.4
