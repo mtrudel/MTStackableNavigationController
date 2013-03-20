@@ -11,9 +11,13 @@
 
 - (id)init {
   if (self = [super init]) {
+    self.leftPeek = 0;
+    self.rightPeek = 20;
     self.shouldPopOnTapWhenPeeking = YES;
+    self.shouldEndRevealOnTapWhenRevealing = YES;
     self.shouldRecognizePans = YES;
     self.shouldPopWhenPannedToRight = YES;
+    self.shouldEndRevealWhenPannedToLeft = YES;
   }
   return self;
 }
