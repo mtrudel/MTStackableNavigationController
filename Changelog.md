@@ -1,3 +1,9 @@
+## 0.3.0
+
+* Add ability to reveal the next-to-top controller in the stack
+* Tweak how far controllers need to be panned to pop / end a reveal
+* Start using MTCollectionOperators for set operations internally
+
 ## 0.2.0
 
 * Switch to MIT license

@@ -22,18 +22,23 @@ reason to reinvent the wheel in that respect.
   identical to those of `UINavigationController`.
 * View controllers can customize various aspects of their presentation by
   configuring their `stackableNavigationItem` property.
+* Views can be configured to stick around on the left hand side after being
+  pushed on top of (this is the 'leftPeek' property on stackableNavigationItem)
+* The controller can reveal the next-to-top controller in the stack, having the
+  top controller stay on screen on the right-hand side (this is the 'rightPeek'
+  property on stackableNavigationItem)
 
 `MTStackableNavigationController` is still under active development and
 a number of features aren't done yet (but they will be soon). A rough plan of
 the near future looks like this:
 
-### Planned for 0.3
+### Planned for 0.4
 
 * Support for configuring the navigation bar (including tints and other appearance hints)
 * Better support for toolbars on contained view controllers
 * More complete support for seldom used properties of `navigationItem`
 
-### Planned for 0.4
+### Planned for 0.5
 
 * Support for subview layouts and reizing on rotation (currently, only portrait
   is supported)
@@ -42,7 +47,7 @@ the near future looks like this:
   plenty of other view controller projects out there that are probably better
   choices for iPad development anyway)
 
-### Planned for 0.5
+### Planned for 0.6
 
 * Comprehensive test suite to stay in lock-step with subtle timing changes of
   view lifecycle messages in `UINavigationController`
