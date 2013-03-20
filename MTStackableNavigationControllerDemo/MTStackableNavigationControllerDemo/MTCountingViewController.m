@@ -51,6 +51,14 @@
   }
 }
 
+- (IBAction)revealParentController:(id)sender {
+  [self.stackableNavigationController revealParentControllerAnimated:YES];
+}
+
+- (IBAction)stopReveal:(id)sender {
+  [self.stackableNavigationController endRevealAnimated:YES];
+}
+
 #pragma mark - Notification messages for various events - use these to verify adherence to UINavigationController semantics
 
 - (void)viewWillAppear:(BOOL)animated {
