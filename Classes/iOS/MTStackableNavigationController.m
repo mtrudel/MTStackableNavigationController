@@ -17,7 +17,14 @@
 #define kContainerViewShadowWidth 15
 #define kPanGesturePercentageToInducePop 0.5
 
+typedef enum {
+  MTPop,
+  MTPush,
+  MTReveal
+} MTEventType;
+
 @interface MTStackableNavigationController () <UIGestureRecognizerDelegate>
+@property(nonatomic) BOOL isRevealing;
 @end
 
 @implementation MTStackableNavigationController
@@ -36,7 +43,7 @@
 # pragma mark - Lifecycle methods
 
 - (void)viewWillAppear:(BOOL)animated {
-  [self updateViewControllerHierarchyWithPendingRemovals:nil animated:NO];
+  [self updateViewControllerHierarchyForEventType:MTPush withPendingRemovals:nil animated:NO];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -75,8 +82,10 @@
 #pragma mark - view controller hieracrchy manipulation methods (mirroring UINavigationController)
 
 - (void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated {
-  [self addViewControllerToHierarchy:viewController];
-  [self updateViewControllerHierarchyWithPendingRemovals:nil animated:animated];
+  if (!self.isRevealing) {
+    [self addViewControllerToHierarchy:viewController];
+    [self updateViewControllerHierarchyForEventType:MTPush withPendingRemovals:nil animated:animated];
+  }
 }
 
 - (UIViewController *)popViewControllerAnimated:(BOOL)animated {
@@ -89,14 +98,28 @@
 
 - (NSArray *)popToViewController:(UIViewController *)viewController animated:(BOOL)animated {
   NSUInteger index = [self.childViewControllers indexOfObject:viewController];
-  if (index != NSNotFound && index < self.childViewControllers.count - 1) {
+  if (!self.isRevealing && index != NSNotFound && index < self.childViewControllers.count - 1) {
     NSArray *toRemove = [self.childViewControllers subarrayWithRange:NSMakeRange(index + 1, self.childViewControllers.count - index - 1)];
     [toRemove makeObjectsPerformSelector:@selector(willMoveToParentViewController:) withObject:nil];
-    [self updateViewControllerHierarchyWithPendingRemovals:toRemove animated:animated];
+    [self updateViewControllerHierarchyForEventType:MTPop withPendingRemovals:toRemove animated:animated];
     return toRemove;
   } else {
     return nil;
   }
+}
+
+#pragma mark - Custom view controller hierarchy manipulation methods
+
+- (void)revealParentControllerAnimated:(BOOL)animated {
+  if ([self ancestorViewControllerTo:self.topViewController]) {
+    self.isRevealing = YES;
+    [self updateViewControllerHierarchyForEventType:MTReveal withPendingRemovals:nil animated:animated];
+  }
+}
+
+- (void)endRevealAnimated:(BOOL)animated {
+  self.isRevealing = NO;
+  [self updateViewControllerHierarchyForEventType:MTPush withPendingRemovals:nil animated:animated];
 }
 
 #pragma mark - View controller hierarchy methods
@@ -113,10 +136,14 @@
 
 - (NSArray *)expectedVisibleViewControllersWithPendingRemovals:(NSArray *)pendingRemovals {
   NSArray *viewControllers = [self.childViewControllers subtractValuesIn:pendingRemovals];
-  if ([[[self ancestorViewControllerTo:[viewControllers lastObject]] stackableNavigationItem] leftPeek] != 0) {
+  if (self.isRevealing) {
     return @[[self ancestorViewControllerTo:[viewControllers lastObject]], [viewControllers lastObject]];
   } else {
-    return @[[viewControllers lastObject]];
+    if ([[[self ancestorViewControllerTo:[viewControllers lastObject]] stackableNavigationItem] leftPeek] != 0) {
+      return @[[self ancestorViewControllerTo:[viewControllers lastObject]], [viewControllers lastObject]];
+    } else {
+      return @[[viewControllers lastObject]];
+    }
   }
 }
 
@@ -146,7 +173,7 @@
   viewController.stackableNavigationItem.disappearanceCleanupPending = NO;
 }
 
-- (void)updateViewControllerHierarchyWithPendingRemovals:(NSArray *)pendingRemovals animated:(BOOL)animated {
+- (void)updateViewControllerHierarchyForEventType:(MTEventType)type withPendingRemovals:(NSArray *)pendingRemovals animated:(BOOL)animated {
   if (self.isViewLoaded) {
     NSArray *expectedHierarchy = [self expectedVisibleViewControllersWithPendingRemovals:pendingRemovals];
     NSArray *currentHierarchy = [self currentlyVisibleViewControllers];
@@ -169,7 +196,7 @@
       }
     }
     // Perform the transition, passing in a cleanup block
-    [self updateViewHierarchyTo:expectedHierarchy byAdding:toInsert removing:toRemove updating:toUpdate isPush:(!pendingRemovals) animated:animated completion:^{
+    [self updateViewHierarchyTo:expectedHierarchy viaEventType:type byAdding:toInsert removing:toRemove updating:toUpdate animated:animated completion:^{
       // Fire the 'didAppear/Disappear' methods
       for (UIViewController *viewController in toRemove) {
         [self postDisappearanceViewControllerCleanup:viewController removeFromViewControllerHierarchy:[pendingRemovals containsObject:viewController]];
@@ -187,22 +214,24 @@
 
 #pragma mark - View management methods
 
-- (void)updateViewHierarchyTo:(NSArray*)expectedHierarchy byAdding:(NSArray *)toInsert removing:(NSArray *)toRemove updating:(NSArray *)toUpdate isPush:(BOOL)isPush animated:(BOOL)animated completion:(void (^)())completion {
+- (void)updateViewHierarchyTo:(NSArray*)expectedHierarchy viaEventType:(MTEventType)type byAdding:(NSArray *)toInsert removing:(NSArray *)toRemove updating:(NSArray *)toUpdate animated:(BOOL)animated completion:(void (^)())completion {
   if (animated && self.view.window) {
-    [self ensureContainerViewExistsForControllers:toInsert];
-    [self layoutViewControllersToPreanimationStateImmediate:toInsert isPush:isPush];
-    [self addViewControllersToViewHierarchyImmediate:toInsert];
+    if (toInsert.count > 0) {
+      [self ensureContainerViewExistsForControllers:toInsert];
+      [self layoutViewControllersToPreanimationStateImmediate:toInsert isPush:type == MTPush];
+      [self addViewControllersToViewHierarchyImmediate:toInsert];
+    }
     [UIView animateWithDuration:kAnimationDuration animations:^{
-      [self layoutViewControllersToFinalStateForRemovalImmediate:toRemove isPush:isPush];
-      [self layoutViewControllersToFinalStateImmediate:expectedHierarchy];
-      [self addGestureRecognizersToViews:expectedHierarchy];
+      [self layoutViewControllersToFinalStateForRemovalImmediate:toRemove isPush:type == MTPush];
+      [self layoutViewControllersToFinalStateImmediate:expectedHierarchy isReveal:type == MTReveal];
+      [self addGestureRecognizersToViews:expectedHierarchy isReveal:type == MTReveal];
     } completion:^(BOOL finished) {
       [self removeViewControllersFromViewHierarchyImmediate:toRemove];
       completion();
     }];
   } else {
     [self ensureContainerViewExistsForControllers:toInsert];
-    [self layoutViewControllersToFinalStateImmediate:expectedHierarchy];
+    [self layoutViewControllersToFinalStateImmediate:expectedHierarchy isReveal:type == MTReveal];
     [self addViewControllersToViewHierarchyImmediate:toInsert];
     [self removeViewControllersFromViewHierarchyImmediate:toRemove];
     completion();
@@ -243,15 +272,28 @@
   }
 }
 
-- (void)layoutViewControllersToFinalStateImmediate:(NSArray *)toLayout {
+- (void)layoutViewControllersToFinalStateImmediate:(NSArray *)toLayout isReveal:(BOOL)isReveal {
   for (UIViewController *viewController in toLayout) {
-    if (viewController == [toLayout lastObject]) {
-      CGFloat peek = [self ancestorViewControllerTo:viewController].stackableNavigationItem.leftPeek;
-      viewController.stackableNavigationItem.containerView.frame = CGRectMake(peek, 0, self.view.bounds.size.width - peek, self.view.bounds.size.height);
+    if (isReveal) {
+      if (viewController == [toLayout lastObject]) {
+        CGFloat peek = viewController.stackableNavigationItem.rightPeek;
+        CGRect newFrame = viewController.stackableNavigationItem.containerView.frame;
+        newFrame.origin.x = self.view.bounds.size.width - peek;
+        viewController.stackableNavigationItem.containerView.frame = newFrame;
+      } else {
+        CGRect newFrame = viewController.stackableNavigationItem.containerView.frame;
+        newFrame.origin.x = 0;
+        viewController.stackableNavigationItem.containerView.frame = newFrame;
+      }
     } else {
-      CGRect newFrame = viewController.stackableNavigationItem.containerView.frame;
-      newFrame.origin.x = 0;
-      viewController.stackableNavigationItem.containerView.frame = newFrame;
+      if (viewController == [toLayout lastObject]) {
+        CGFloat peek = [self ancestorViewControllerTo:viewController].stackableNavigationItem.leftPeek;
+        viewController.stackableNavigationItem.containerView.frame = CGRectMake(peek, 0, self.view.bounds.size.width - peek, self.view.bounds.size.height);
+      } else {
+        CGRect newFrame = viewController.stackableNavigationItem.containerView.frame;
+        newFrame.origin.x = 0;
+        viewController.stackableNavigationItem.containerView.frame = newFrame;
+      }
     }
   }
 }
@@ -304,26 +346,34 @@
 
 #pragma mark -- Gesture management
 
-- (void)addGestureRecognizersToViews:(NSArray *)viewControllers {
+- (void)addGestureRecognizersToViews:(NSArray *)viewControllers isReveal:(BOOL)isReveal {
   for (UIViewController *viewController in viewControllers) {
     for (UIGestureRecognizer *gestureRecognizer in [viewController.stackableNavigationItem.containerView.gestureRecognizers copy]) {
       [viewController.stackableNavigationItem.containerView removeGestureRecognizer:gestureRecognizer];
     }
     if (viewController == [viewControllers lastObject]) {
       for (UIView *view in viewController.stackableNavigationItem.containerView.subviews) {
-        view.userInteractionEnabled = YES;
+        view.userInteractionEnabled = !isReveal;
       }
-      if (viewController.stackableNavigationItem.shouldRecognizePans && [self ancestorViewControllerTo:viewController].stackableNavigationItem.leftPeek > 0) {
+      if (viewController.stackableNavigationItem.shouldRecognizePans && ([self ancestorViewControllerTo:viewController].stackableNavigationItem.leftPeek > 0 || isReveal)) {
         UIPanGestureRecognizer *gestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(viewDidPan:)];
         gestureRecognizer.delegate = self;
         [viewController.stackableNavigationItem.containerView addGestureRecognizer:gestureRecognizer];
       }
-    } else if (viewController.stackableNavigationItem.shouldPopOnTapWhenPeeking) {
+      if (isReveal && viewController.stackableNavigationItem.shouldEndRevealOnTapWhenRevealing) {
+        UITapGestureRecognizer *gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewDidTap:)];
+        [viewController.stackableNavigationItem.containerView addGestureRecognizer:gestureRecognizer];
+      }
+    } else if (!isReveal && viewController.stackableNavigationItem.shouldPopOnTapWhenPeeking) {
       for (UIView *view in viewController.stackableNavigationItem.containerView.subviews) {
         view.userInteractionEnabled = NO;
       }
       UITapGestureRecognizer *gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewDidTap:)];
       [viewController.stackableNavigationItem.containerView addGestureRecognizer:gestureRecognizer];
+    } else if (isReveal) {
+      for (UIView *view in viewController.stackableNavigationItem.containerView.subviews) {
+        view.userInteractionEnabled = YES;
+      }
     }
   }
 }
@@ -344,21 +394,43 @@
   }]];
 
   if (gestureRecognizer.state == UIGestureRecognizerStateEnded) {
-    if (pannedViewController.stackableNavigationItem.shouldPopWhenPannedToRight && [gestureRecognizer translationInView:self.view].x >= [sender view].frame.size.width * kPanGesturePercentageToInducePop) {
-      [self popToViewController:[self ancestorViewControllerTo:pannedViewController] animated:YES];
+    if (self.isRevealing) {
+      if (pannedViewController.stackableNavigationItem.shouldEndRevealWhenPannedToLeft && [gestureRecognizer translationInView:self.view].x <= - [sender view].frame.size.width * (kPanGesturePercentageToInducePop)) {
+        [self endRevealAnimated:YES];
+      } else {
+        CGFloat peek = pannedViewController.stackableNavigationItem.rightPeek;
+        CGRect finalFrame = pannedViewController.stackableNavigationItem.containerView.frame;
+        finalFrame.origin.x =  self.view.bounds.size.width - peek;
+        [UIView animateWithDuration:0.3 animations:^{
+          pannedViewController.stackableNavigationItem.containerView.frame = finalFrame;
+        }];
+      }
+    } else {
+      if (pannedViewController.stackableNavigationItem.shouldPopWhenPannedToRight && [gestureRecognizer translationInView:self.view].x >= [sender view].frame.size.width * kPanGesturePercentageToInducePop) {
+        [self popToViewController:[self ancestorViewControllerTo:pannedViewController] animated:YES];
+      } else {
+        CGRect finalFrame = pannedViewController.stackableNavigationItem.containerView.frame;
+        finalFrame.origin.x = [self ancestorViewControllerTo:pannedViewController].stackableNavigationItem.leftPeek;
+        [UIView animateWithDuration:0.3 animations:^{
+          pannedViewController.stackableNavigationItem.containerView.frame = finalFrame;
+        }];
+      }
+    }
+  } else if (gestureRecognizer.state == UIGestureRecognizerStateChanged) {
+    if (self.isRevealing) {
+      CGRect finalFrame = pannedViewController.stackableNavigationItem.containerView.frame;
+      CGFloat peek = pannedViewController.stackableNavigationItem.rightPeek;
+      finalFrame.origin.x = self.view.bounds.size.width - peek + [gestureRecognizer translationInView:self.view].x;
+      [UIView animateWithDuration:0.1 animations:^{
+        pannedViewController.stackableNavigationItem.containerView.frame = finalFrame;
+      }];
     } else {
       CGRect finalFrame = pannedViewController.stackableNavigationItem.containerView.frame;
-      finalFrame.origin.x = [self ancestorViewControllerTo:pannedViewController].stackableNavigationItem.leftPeek;
-      [UIView animateWithDuration:0.3 animations:^{
+      finalFrame.origin.x = [self ancestorViewControllerTo:pannedViewController].stackableNavigationItem.leftPeek + MAX([gestureRecognizer translationInView:self.view].x, 0);
+      [UIView animateWithDuration:0.1 animations:^{
         pannedViewController.stackableNavigationItem.containerView.frame = finalFrame;
       }];
     }
-  } else if (gestureRecognizer.state == UIGestureRecognizerStateChanged) {
-    CGRect finalFrame = pannedViewController.stackableNavigationItem.containerView.frame;
-    finalFrame.origin.x = [self ancestorViewControllerTo:pannedViewController].stackableNavigationItem.leftPeek + MAX([gestureRecognizer translationInView:self.view].x, 0);
-    [UIView animateWithDuration:0.1 animations:^{
-      pannedViewController.stackableNavigationItem.containerView.frame = finalFrame;
-    }];
   }
 }
 
@@ -368,7 +440,11 @@
     UIViewController *viewController = self.childViewControllers[[self.childViewControllers indexOfObjectPassingTest:^BOOL(UIViewController *cur, NSUInteger idx, BOOL *stop) {
       return cur.stackableNavigationItem.containerView == [sender view];
     }]];
-    [self popToViewController:viewController animated:YES];
+    if (self.isRevealing) {
+      [self endRevealAnimated:YES];
+    } else {
+      [self popToViewController:viewController animated:YES];
+    }
   }
 }
 
@@ -378,6 +454,5 @@
   [self popViewControllerAnimated:YES];
   return NO;
 }
-
 
 @end

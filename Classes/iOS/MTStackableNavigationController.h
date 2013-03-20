@@ -12,6 +12,7 @@
 @protocol MTStackableNavigationControllerDelegate;
 
 @interface MTStackableNavigationController : UIViewController
+@property(nonatomic, readonly) BOOL isRevealing;
 @property(nonatomic, readonly) NSArray *viewControllers;
 @property(nonatomic, readonly) UIViewController *topViewController;
 @property(nonatomic, assign) id<MTStackableNavigationControllerDelegate> delegate;
@@ -22,6 +23,9 @@
 - (UIViewController *)popViewControllerAnimated:(BOOL)animated;
 - (NSArray *)popToViewController:(UIViewController *)viewController animated:(BOOL)animated;
 - (NSArray *)popToRootViewControllerAnimated:(BOOL)animated;
+
+- (void)revealParentControllerAnimated:(BOOL)animated;
+- (void)endRevealAnimated:(BOOL)animated;
 
 @end
 
