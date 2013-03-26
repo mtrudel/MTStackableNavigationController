@@ -283,6 +283,7 @@ typedef enum {
       } else {
         CGRect newFrame = viewController.stackableNavigationItem.containerView.frame;
         newFrame.origin.x = 0;
+        newFrame.size.width = self.view.bounds.size.width - [[[toLayout lastObject] stackableNavigationItem] rightPeek];
         viewController.stackableNavigationItem.containerView.frame = newFrame;
       }
     } else {
@@ -292,6 +293,7 @@ typedef enum {
       } else {
         CGRect newFrame = viewController.stackableNavigationItem.containerView.frame;
         newFrame.origin.x = 0;
+        newFrame.size.width = self.view.bounds.size.width;
         viewController.stackableNavigationItem.containerView.frame = newFrame;
       }
     }
@@ -320,6 +322,7 @@ typedef enum {
     UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:navBarFrame];
     navBar.barStyle = viewController.stackableNavigationItem.barStyle;
     navBar.tintColor = viewController.stackableNavigationItem.tintColor;
+    navBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     if (previousViewController.navigationItem) {
       UINavigationItem *previousItem = [[UINavigationItem alloc] initWithTitle:previousViewController.navigationItem.title];
       previousItem.backBarButtonItem = previousViewController.navigationItem.backBarButtonItem;
