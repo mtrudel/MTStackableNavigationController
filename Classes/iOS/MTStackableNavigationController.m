@@ -14,7 +14,7 @@
 
 #define kAnimationDuration 0.3
 #define kCoveredControllerWidthDivisor 2
-#define kContainerViewShadowWidth 15
+#define kContainerViewShadowWidth 8
 #define kPanGesturePercentageToInducePop 0.5
 
 typedef enum {
@@ -340,8 +340,8 @@ typedef enum {
 
     viewController.stackableNavigationItem.containerView.layer.masksToBounds = NO;
     viewController.stackableNavigationItem.containerView.layer.shadowOffset = CGSizeMake(-kContainerViewShadowWidth, 0);
-    viewController.stackableNavigationItem.containerView.layer.shadowRadius = kContainerViewShadowWidth / 5;
-    viewController.stackableNavigationItem.containerView.layer.shadowOpacity = 0.5;
+    viewController.stackableNavigationItem.containerView.layer.shadowRadius = kContainerViewShadowWidth / 2;
+    viewController.stackableNavigationItem.containerView.layer.shadowOpacity = 0.3;
     viewController.stackableNavigationItem.containerView.layer.shadowPath = [UIBezierPath bezierPathWithRect:viewController.stackableNavigationItem.containerView.bounds].CGPath;
   }
 }
