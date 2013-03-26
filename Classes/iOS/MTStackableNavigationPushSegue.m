@@ -12,7 +12,7 @@
 @implementation MTStackableNavigationPushSegue
 
 - (id)initWithIdentifier:(NSString *)identifier source:(UIViewController *)source destination:(UIViewController *)destination {
-  if ([super initWithIdentifier:identifier source:source destination:destination]) {
+  if (self = [super initWithIdentifier:identifier source:source destination:destination]) {
     self.isAnimated = YES;
   }
   return self;
