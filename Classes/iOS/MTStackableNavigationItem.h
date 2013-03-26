@@ -10,6 +10,16 @@
 @interface MTStackableNavigationItem : NSObject
 
 /**
+ * The style of navigationbar to display. Defaults to UIBarStyleDefault
+ */
+@property(nonatomic) UIBarStyle barStyle;
+
+/**
+ * The color tint for the navigation bar. Defaults to nil
+ */
+@property(nonatomic,strong) UIColor *tintColor;
+
+/**
  * The number of pixels to stay docked on the left when another view is pushed on top
  * Only applies while this is the next-to-top view in the stack
  * Defaults to 0

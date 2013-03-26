@@ -11,6 +11,8 @@
 
 - (id)init {
   if (self = [super init]) {
+    self.barStyle = UIBarStyleDefault;
+    self.tintColor = nil;
     self.leftPeek = 0;
     self.rightPeek = 20;
     self.shouldPopOnTapWhenPeeking = YES;

@@ -318,6 +318,8 @@ typedef enum {
     CGRect navBarFrame, contentFrame, toolbarFrame;
     CGRectDivide(viewController.stackableNavigationItem.containerView.bounds, &navBarFrame, &contentFrame, 44, CGRectMinYEdge);
     UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:navBarFrame];
+    navBar.barStyle = viewController.stackableNavigationItem.barStyle;
+    navBar.tintColor = viewController.stackableNavigationItem.tintColor;
     if (previousViewController.navigationItem) {
       UINavigationItem *previousItem = [[UINavigationItem alloc] initWithTitle:previousViewController.navigationItem.title];
       previousItem.backBarButtonItem = previousViewController.navigationItem.backBarButtonItem;
