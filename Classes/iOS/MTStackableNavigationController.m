@@ -425,7 +425,7 @@ typedef enum {
     if (self.isRevealing) {
       CGRect finalFrame = pannedViewController.stackableNavigationItem.containerView.frame;
       CGFloat peek = pannedViewController.stackableNavigationItem.rightPeek;
-      finalFrame.origin.x = self.view.bounds.size.width - peek + [gestureRecognizer translationInView:self.view].x;
+      finalFrame.origin.x = self.view.bounds.size.width - peek + MIN([gestureRecognizer translationInView:self.view].x, 0);
       [UIView animateWithDuration:0.1 animations:^{
         pannedViewController.stackableNavigationItem.containerView.frame = finalFrame;
       }];
