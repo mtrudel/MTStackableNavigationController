@@ -32,13 +32,13 @@ reason to reinvent the wheel in that respect.
 a number of features aren't done yet (but they will be soon). A rough plan of
 the near future looks like this:
 
-### Planned for 0.4
+### Planned for 0.5
 
 * Support for configuring the navigation bar (including tints and other appearance hints)
 * Better support for toolbars on contained view controllers
 * More complete support for seldom used properties of `navigationItem`
 
-### Planned for 0.5
+### Planned for 0.6
 
 * Support for subview layouts and reizing on rotation (currently, only portrait
   is supported)
@@ -47,7 +47,7 @@ the near future looks like this:
   plenty of other view controller projects out there that are probably better
   choices for iPad development anyway)
 
-### Planned for 0.6
+### Planned for 0.7
 
 * Comprehensive test suite to stay in lock-step with subtle timing changes of
   view lifecycle messages in `UINavigationController`
