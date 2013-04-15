@@ -118,15 +118,19 @@ typedef enum {
 }
 
 - (void)endRevealAnimated:(BOOL)animated {
-  self.isRevealing = NO;
-  [self updateViewControllerHierarchyForEventType:MTPush withPendingRemovals:nil animated:animated completion:nil];
+  if (self.isRevealing) {
+    self.isRevealing = NO;
+    [self updateViewControllerHierarchyForEventType:MTPush withPendingRemovals:nil animated:animated completion:nil];
+  }
 }
 
 - (void)endRevealByReplacingTopWith:(UIViewController *)controller animated:(BOOL)animated {
-  self.isRevealing = NO;
-  [self updateViewControllerHierarchyForEventType:MTPop withPendingRemovals:@[self.topViewController] animated:animated completion:^{
-    [self pushViewController:controller animated:animated];
-  }];
+  if (self.isRevealing) {
+    self.isRevealing = NO;
+    [self updateViewControllerHierarchyForEventType:MTPop withPendingRemovals:@[self.topViewController] animated:animated completion:^{
+      [self pushViewController:controller animated:animated];
+    }];
+  }
 }
 
 #pragma mark - View controller hierarchy methods
