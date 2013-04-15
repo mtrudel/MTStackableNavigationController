@@ -1,3 +1,15 @@
+## 0.4.1
+
+* Add support for popping and replacing child controller in expose mode
+* Shadow tweaks during transitions
+
+## 0.4.0
+
+* Clamp attempts to pan views offscreen
+* Exposed controllers now resize to their exposed widths
+* Shadow visual tweaks
+* Add support for nav bar tinting and styling
+
 ## 0.3.0
 
 * Add ability to reveal the next-to-top controller in the stack
