@@ -26,6 +26,7 @@
 
 - (void)revealParentControllerAnimated:(BOOL)animated;
 - (void)endRevealAnimated:(BOOL)animated;
+- (void)endRevealByReplacingTopWith:(UIViewController *)controller animated:(BOOL)animated;
 
 @end
 

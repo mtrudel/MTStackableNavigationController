@@ -43,7 +43,7 @@ typedef enum {
 # pragma mark - Lifecycle methods
 
 - (void)viewWillAppear:(BOOL)animated {
-  [self updateViewControllerHierarchyForEventType:MTPush withPendingRemovals:nil animated:NO];
+  [self updateViewControllerHierarchyForEventType:MTPush withPendingRemovals:nil animated:NO completion:nil];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -84,7 +84,7 @@ typedef enum {
 - (void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated {
   if (!self.isRevealing) {
     [self addViewControllerToHierarchy:viewController];
-    [self updateViewControllerHierarchyForEventType:MTPush withPendingRemovals:nil animated:animated];
+    [self updateViewControllerHierarchyForEventType:MTPush withPendingRemovals:nil animated:animated completion:nil];
   }
 }
 
@@ -101,7 +101,7 @@ typedef enum {
   if (!self.isRevealing && index != NSNotFound && index < self.childViewControllers.count - 1) {
     NSArray *toRemove = [self.childViewControllers subarrayWithRange:NSMakeRange(index + 1, self.childViewControllers.count - index - 1)];
     [toRemove makeObjectsPerformSelector:@selector(willMoveToParentViewController:) withObject:nil];
-    [self updateViewControllerHierarchyForEventType:MTPop withPendingRemovals:toRemove animated:animated];
+    [self updateViewControllerHierarchyForEventType:MTPop withPendingRemovals:toRemove animated:animated completion:nil];
     return toRemove;
   } else {
     return nil;
@@ -113,13 +113,20 @@ typedef enum {
 - (void)revealParentControllerAnimated:(BOOL)animated {
   if ([self ancestorViewControllerTo:self.topViewController]) {
     self.isRevealing = YES;
-    [self updateViewControllerHierarchyForEventType:MTReveal withPendingRemovals:nil animated:animated];
+    [self updateViewControllerHierarchyForEventType:MTReveal withPendingRemovals:nil animated:animated completion:nil];
   }
 }
 
 - (void)endRevealAnimated:(BOOL)animated {
   self.isRevealing = NO;
-  [self updateViewControllerHierarchyForEventType:MTPush withPendingRemovals:nil animated:animated];
+  [self updateViewControllerHierarchyForEventType:MTPush withPendingRemovals:nil animated:animated completion:nil];
+}
+
+- (void)endRevealByReplacingTopWith:(UIViewController *)controller animated:(BOOL)animated {
+  self.isRevealing = NO;
+  [self updateViewControllerHierarchyForEventType:MTPop withPendingRemovals:@[self.topViewController] animated:animated completion:^{
+    [self pushViewController:controller animated:animated];
+  }];
 }
 
 #pragma mark - View controller hierarchy methods
@@ -173,7 +180,7 @@ typedef enum {
   viewController.stackableNavigationItem.disappearanceCleanupPending = NO;
 }
 
-- (void)updateViewControllerHierarchyForEventType:(MTEventType)type withPendingRemovals:(NSArray *)pendingRemovals animated:(BOOL)animated {
+- (void)updateViewControllerHierarchyForEventType:(MTEventType)type withPendingRemovals:(NSArray *)pendingRemovals animated:(BOOL)animated completion:(void (^)())completion {
   if (self.isViewLoaded) {
     NSArray *expectedHierarchy = [self expectedVisibleViewControllersWithPendingRemovals:pendingRemovals];
     NSArray *currentHierarchy = [self currentlyVisibleViewControllers];
@@ -207,6 +214,9 @@ typedef enum {
         } else {
           viewController.stackableNavigationItem.appearanceCleanupPending = YES;
         }
+      }
+      if (completion) {
+        completion();
       }
     }];
   }
