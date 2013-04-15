@@ -275,7 +275,9 @@ typedef enum {
   for (UIViewController *viewController in toLayout) {
     NSAssert(![viewController.stackableNavigationItem.containerView isDescendantOfView:self.view], @"Can't pre-position an already inserted view controller");
     if (isPush) {
-      viewController.stackableNavigationItem.containerView.frame = CGRectApplyAffineTransform(viewController.stackableNavigationItem.containerView.frame, CGAffineTransformMakeTranslation(self.view.bounds.size.width, 0));
+      CGRect newFrame = viewController.stackableNavigationItem.containerView.frame;
+      newFrame.origin.x = self.view.bounds.size.width;
+      viewController.stackableNavigationItem.containerView.frame = newFrame;
     }
   }
 }
@@ -283,9 +285,13 @@ typedef enum {
 - (void)layoutViewControllersToFinalStateForRemovalImmediate:(NSArray *)toLayout isPush:(BOOL)isPush {
   for (UIViewController *viewController in toLayout) {
     if (isPush) {
-      viewController.stackableNavigationItem.containerView.frame = CGRectApplyAffineTransform(viewController.stackableNavigationItem.containerView.frame, CGAffineTransformMakeTranslation(-viewController.stackableNavigationItem.containerView.frame.size.width / kCoveredControllerWidthDivisor, 0));
+      CGRect newFrame = viewController.stackableNavigationItem.containerView.frame;
+      newFrame.origin.x = -viewController.stackableNavigationItem.containerView.frame.size.width / kCoveredControllerWidthDivisor;
+      viewController.stackableNavigationItem.containerView.frame = newFrame;
     } else {
-      viewController.stackableNavigationItem.containerView.frame = CGRectApplyAffineTransform(viewController.stackableNavigationItem.containerView.frame, CGAffineTransformMakeTranslation(self.view.bounds.size.width - viewController.stackableNavigationItem.containerView.frame.origin.x, 0));
+      CGRect newFrame = viewController.stackableNavigationItem.containerView.frame;
+      newFrame.origin.x = self.view.bounds.size.width;
+      viewController.stackableNavigationItem.containerView.frame = newFrame;
     }
   }
 }
