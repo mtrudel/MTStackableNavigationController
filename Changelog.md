@@ -1,3 +1,7 @@
+## 0.4.2
+
+* Fix appearance issues when new view controllers have exising frames
+
 ## 0.4.1
 
 * Add support for popping and replacing child controller in expose mode
