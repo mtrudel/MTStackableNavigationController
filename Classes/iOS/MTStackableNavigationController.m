@@ -14,8 +14,9 @@
 
 #define kAnimationDuration 0.3
 #define kCoveredControllerWidthDivisor 2
-#define kContainerViewShadowWidth 8
 #define kPanGesturePercentageToInducePop 0.5
+#define kShadowRadius 4.
+#define kShadowWidth 8.
 
 typedef enum {
   MTPop,
@@ -234,7 +235,9 @@ typedef enum {
       [self ensureContainerViewExistsForControllers:toInsert];
       [self layoutViewControllersToPreanimationStateImmediate:toInsert isPush:type == MTPush];
       [self addViewControllersToViewHierarchyImmediate:toInsert];
+      [self addShadowsToViewControllers:toInsert animated:YES];
     }
+    [self removeShadowsFromViewControllers:toRemove animated:YES];
     [UIView animateWithDuration:kAnimationDuration animations:^{
       [self layoutViewControllersToFinalStateForRemovalImmediate:toRemove isPush:type == MTPush];
       [self layoutViewControllersToFinalStateImmediate:expectedHierarchy isReveal:type == MTReveal];
@@ -248,6 +251,7 @@ typedef enum {
     [self layoutViewControllersToFinalStateImmediate:expectedHierarchy isReveal:type == MTReveal];
     [self addViewControllersToViewHierarchyImmediate:toInsert];
     [self removeViewControllersFromViewHierarchyImmediate:toRemove];
+    [self addShadowsToViewControllers:toInsert animated:NO];
     completion();
   }
 }
@@ -271,7 +275,7 @@ typedef enum {
   for (UIViewController *viewController in toLayout) {
     NSAssert(![viewController.stackableNavigationItem.containerView isDescendantOfView:self.view], @"Can't pre-position an already inserted view controller");
     if (isPush) {
-      viewController.stackableNavigationItem.containerView.frame = CGRectApplyAffineTransform(viewController.stackableNavigationItem.containerView.frame, CGAffineTransformMakeTranslation(self.view.bounds.size.width + kContainerViewShadowWidth, 0));
+      viewController.stackableNavigationItem.containerView.frame = CGRectApplyAffineTransform(viewController.stackableNavigationItem.containerView.frame, CGAffineTransformMakeTranslation(self.view.bounds.size.width, 0));
     }
   }
 }
@@ -281,7 +285,7 @@ typedef enum {
     if (isPush) {
       viewController.stackableNavigationItem.containerView.frame = CGRectApplyAffineTransform(viewController.stackableNavigationItem.containerView.frame, CGAffineTransformMakeTranslation(-viewController.stackableNavigationItem.containerView.frame.size.width / kCoveredControllerWidthDivisor, 0));
     } else {
-      viewController.stackableNavigationItem.containerView.frame = CGRectApplyAffineTransform(viewController.stackableNavigationItem.containerView.frame, CGAffineTransformMakeTranslation(self.view.bounds.size.width + kContainerViewShadowWidth, 0));
+      viewController.stackableNavigationItem.containerView.frame = CGRectApplyAffineTransform(viewController.stackableNavigationItem.containerView.frame, CGAffineTransformMakeTranslation(self.view.bounds.size.width - viewController.stackableNavigationItem.containerView.frame.origin.x, 0));
     }
   }
 }
@@ -354,12 +358,39 @@ typedef enum {
     }
     viewController.view.frame = contentFrame;
     [viewController.stackableNavigationItem.containerView addSubview:viewController.view];
+  }
+}
 
+#pragma mark -- Shadow management
+
+- (void)addShadowsToViewControllers:(NSArray *)viewControllers animated:(BOOL)animated {
+  for (UIViewController *viewController in viewControllers) {
     viewController.stackableNavigationItem.containerView.layer.masksToBounds = NO;
-    viewController.stackableNavigationItem.containerView.layer.shadowOffset = CGSizeMake(-kContainerViewShadowWidth, 0);
-    viewController.stackableNavigationItem.containerView.layer.shadowRadius = kContainerViewShadowWidth / 2;
+    viewController.stackableNavigationItem.containerView.layer.shadowRadius = kShadowRadius;
     viewController.stackableNavigationItem.containerView.layer.shadowOpacity = 0.3;
     viewController.stackableNavigationItem.containerView.layer.shadowPath = [UIBezierPath bezierPathWithRect:viewController.stackableNavigationItem.containerView.bounds].CGPath;
+
+    if (animated) {
+      CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"shadowOffset"];
+      animation.duration = kAnimationDuration;
+      animation.fromValue = [NSValue valueWithCGSize:CGSizeMake(kShadowRadius, 0)];
+      animation.toValue = [NSValue valueWithCGSize:CGSizeMake(-kShadowWidth, 0)];
+      [viewController.stackableNavigationItem.containerView.layer addAnimation:animation forKey:nil];
+    }
+    viewController.stackableNavigationItem.containerView.layer.shadowOffset = CGSizeMake(-kShadowWidth, 0);
+  }
+}
+
+- (void)removeShadowsFromViewControllers:(NSArray *)viewControllers animated:(BOOL)animated {
+  for (UIViewController *viewController in viewControllers) {
+    if (animated) {
+      CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"shadowOffset"];
+      animation.duration = kAnimationDuration;
+      animation.fromValue = [NSValue valueWithCGSize:viewController.stackableNavigationItem.containerView.layer.shadowOffset];
+      animation.toValue = [NSValue valueWithCGSize:CGSizeMake(kShadowRadius, 0)];
+      [viewController.stackableNavigationItem.containerView.layer addAnimation:animation forKey:nil];
+    }
+    viewController.stackableNavigationItem.containerView.layer.shadowOffset = CGSizeMake(kShadowRadius, 0);
   }
 }
 
