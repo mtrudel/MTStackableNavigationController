@@ -374,8 +374,11 @@ typedef enum {
       toolbar.items = viewController.toolbarItems;
       [viewController.stackableNavigationItem.containerView addSubview:toolbar];
     }
-    viewController.view.frame = contentFrame;
-    [viewController.stackableNavigationItem.containerView addSubview:viewController.view];
+    UIView *contentView = [[UIView alloc] initWithFrame:contentFrame];
+    contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    viewController.view.frame = contentView.bounds;
+    [contentView addSubview:viewController.view];
+    [viewController.stackableNavigationItem.containerView addSubview:contentView];
     [viewController.stackableNavigationItem.containerView addSubview:navBar];
   }
 }
