@@ -1,3 +1,10 @@
+## 0.4.3
+
+* Changes to work better with UAppearance defaults on UINavigationBar
+* Resize content view if navigation bar is translucent
+* Embed content inside a contentView, to align with frame behaviour of
+  UINavigationController
+
 ## 0.4.2
 
 * Fix appearance issues when new view controllers have exising frames
