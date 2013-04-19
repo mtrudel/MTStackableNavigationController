@@ -15,6 +15,11 @@
 @property(nonatomic) UIBarStyle barStyle;
 
 /**
+ * Whether the navigation bar is translucent. Defaults to NO
+ */
+@property(nonatomic,getter=isTranslucent) BOOL translucent;
+
+/**
  * The color tint for the navigation bar. Defaults to nil
  */
 @property(nonatomic,strong) UIColor *tintColor;

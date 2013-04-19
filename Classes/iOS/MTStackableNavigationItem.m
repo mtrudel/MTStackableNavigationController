@@ -12,6 +12,7 @@
 - (id)init {
   if (self = [super init]) {
     self.barStyle = UIBarStyleDefault;
+    self.translucent = NO;
     self.tintColor = nil;
     self.leftPeek = 0;
     self.rightPeek = 20;

@@ -346,6 +346,7 @@ typedef enum {
     UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:navBarFrame];
     navBar.barStyle = viewController.stackableNavigationItem.barStyle;
     navBar.tintColor = viewController.stackableNavigationItem.tintColor;
+    navBar.translucent = viewController.stackableNavigationItem.isTranslucent;
     navBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     if (previousViewController.navigationItem) {
       UINavigationItem *previousItem = [[UINavigationItem alloc] initWithTitle:previousViewController.navigationItem.title];
