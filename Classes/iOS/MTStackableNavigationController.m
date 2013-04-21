@@ -15,6 +15,7 @@
 #define kAnimationDuration 0.3
 #define kCoveredControllerWidthDivisor 2
 #define kPanGesturePercentageToInducePop 0.5
+#define kPanGesturePercentageToEndReveal 0.2
 #define kShadowRadius 4.
 #define kShadowWidth 8.
 
@@ -467,7 +468,7 @@ typedef enum {
 
   if (gestureRecognizer.state == UIGestureRecognizerStateEnded) {
     if (self.isRevealing) {
-      if (pannedViewController.stackableNavigationItem.shouldEndRevealWhenPannedToLeft && [gestureRecognizer translationInView:self.view].x <= - [sender view].frame.size.width * (kPanGesturePercentageToInducePop)) {
+      if (pannedViewController.stackableNavigationItem.shouldEndRevealWhenPannedToLeft && [gestureRecognizer translationInView:self.view].x <= - [sender view].frame.size.width * (kPanGesturePercentageToEndReveal)) {
         [self endRevealAnimated:YES];
       } else {
         CGFloat peek = pannedViewController.stackableNavigationItem.rightPeek;
