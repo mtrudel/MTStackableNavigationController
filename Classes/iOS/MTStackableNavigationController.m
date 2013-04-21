@@ -203,6 +203,7 @@ typedef enum {
       [viewController beginAppearanceTransition:NO animated:animated];
     }
     for (UIViewController *viewController in toInsert) {
+      [self ensureContainerViewExistsForController:viewController];
       [viewController beginAppearanceTransition:YES animated:animated];
       if ([self.delegate respondsToSelector:@selector(stackableNavigationController:willShowViewController:animated:)]) {
         [self.delegate stackableNavigationController:self willShowViewController:viewController animated:animated];
@@ -233,7 +234,6 @@ typedef enum {
 - (void)updateViewHierarchyTo:(NSArray*)expectedHierarchy viaEventType:(MTEventType)type byAdding:(NSArray *)toInsert removing:(NSArray *)toRemove updating:(NSArray *)toUpdate animated:(BOOL)animated completion:(void (^)())completion {
   if (animated && self.view.window) {
     if (toInsert.count > 0) {
-      [self ensureContainerViewExistsForControllers:toInsert];
       [self layoutViewControllersToPreanimationStateImmediate:toInsert isPush:type == MTPush];
       [self addViewControllersToViewHierarchyImmediate:toInsert];
       [self addShadowsToViewControllers:toInsert animated:YES];
@@ -248,7 +248,6 @@ typedef enum {
       completion();
     }];
   } else {
-    [self ensureContainerViewExistsForControllers:toInsert];
     [self layoutViewControllersToFinalStateImmediate:expectedHierarchy isReveal:type == MTReveal];
     [self addViewControllersToViewHierarchyImmediate:toInsert];
     [self removeViewControllersFromViewHierarchyImmediate:toRemove];
@@ -264,7 +263,7 @@ typedef enum {
     } else if (viewController == [self ancestorViewControllerTo:self.topViewController]) {
       [self.view insertSubview:viewController.stackableNavigationItem.containerView belowSubview:self.topViewController.stackableNavigationItem.containerView];
     } else if (viewController == [self ancestorViewControllerTo:[self ancestorViewControllerTo:self.topViewController]]) {
-      [self.view insertSubview:viewController.stackableNavigationItem.containerView belowSubview:[self ancestorViewControllerTo:self.topViewController].stackableNavigationItem.containerView];      
+      [self.view insertSubview:viewController.stackableNavigationItem.containerView belowSubview:[self ancestorViewControllerTo:self.topViewController].stackableNavigationItem.containerView];
     } else {
       NSAssert(false, @"Don't know what index to add a view controller");
     }
@@ -328,12 +327,6 @@ typedef enum {
 - (void)removeViewControllersFromViewHierarchyImmediate:(NSArray *)toRemove {
   for (UIViewController *viewController in toRemove) {
     [viewController.stackableNavigationItem.containerView removeFromSuperview];
-  }
-}
-
-- (void)ensureContainerViewExistsForControllers:(NSArray *)viewControllers {
-  for (UIViewController *viewController in viewControllers) {
-    [self ensureContainerViewExistsForController:viewController];
   }
 }
 
