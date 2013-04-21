@@ -1,3 +1,9 @@
+## 0.4.4
+
+* Lower the amount of pan required to end a reveal
+* Ensure that a view controller has its frame set before calling viewWillAppear
+  on it
+
 ## 0.4.3
 
 * Changes to work better with UAppearance defaults on UINavigationBar
