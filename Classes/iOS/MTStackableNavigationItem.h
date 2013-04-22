@@ -10,6 +10,11 @@
 @interface MTStackableNavigationItem : NSObject
 
 /**
+ * Whether the navigation bar should be hidden for this view controller. Defaults to NO
+ */
+@property(nonatomic) BOOL hidesNavigationBar;
+
+/**
  * The style of navigationbar to display. Defaults to UIBarStyleDefault
  */
 @property(nonatomic) UIBarStyle barStyle;

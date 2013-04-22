@@ -335,34 +335,41 @@ typedef enum {
     UIViewController *previousViewController = [self ancestorViewControllerTo:viewController];
     CGRect rect = UIEdgeInsetsInsetRect(self.view.bounds, UIEdgeInsetsMake(0, previousViewController.stackableNavigationItem.leftPeek, 0, 0));
     viewController.stackableNavigationItem.containerView = [[UIView alloc] initWithFrame:rect];
-    CGRect navBarFrame, contentFrame, toolbarFrame;
-    if (viewController.stackableNavigationItem.isTranslucent) {
-      navBarFrame = CGRectMake(0, 0, rect.size.width, 44);
+    CGRect contentFrame;
+    if (viewController.stackableNavigationItem.hidesNavigationBar) {
       contentFrame = viewController.stackableNavigationItem.containerView.bounds;
-      if ([viewController.view respondsToSelector:@selector(setContentInset:)]) {
-        [((id)viewController.view) setContentInset:UIEdgeInsetsMake(44, 0, 0, 0)];
-      }
     } else {
-      CGRectDivide(viewController.stackableNavigationItem.containerView.bounds, &navBarFrame, &contentFrame, 44, CGRectMinYEdge);
+      CGRect navBarFrame;
+      if (viewController.stackableNavigationItem.isTranslucent) {
+        navBarFrame = CGRectMake(0, 0, rect.size.width, 44);
+        contentFrame = viewController.stackableNavigationItem.containerView.bounds;
+        if ([viewController.view respondsToSelector:@selector(setContentInset:)]) {
+          [((id)viewController.view) setContentInset:UIEdgeInsetsMake(44, 0, 0, 0)];
+        }
+      } else {
+        CGRectDivide(viewController.stackableNavigationItem.containerView.bounds, &navBarFrame, &contentFrame, 44, CGRectMinYEdge);
+      }
+      UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:navBarFrame];
+      if (viewController.stackableNavigationItem.barStyle != UIBarStyleDefault) {
+        navBar.barStyle = viewController.stackableNavigationItem.barStyle;
+      }
+      navBar.translucent = viewController.stackableNavigationItem.isTranslucent;
+      if (viewController.stackableNavigationItem.tintColor) {
+        navBar.tintColor = viewController.stackableNavigationItem.tintColor;
+      }
+      navBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+      if (previousViewController.navigationItem) {
+        UINavigationItem *previousItem = [[UINavigationItem alloc] initWithTitle:previousViewController.navigationItem.title];
+        previousItem.backBarButtonItem = previousViewController.navigationItem.backBarButtonItem;
+        [navBar pushNavigationItem:previousItem animated:NO];
+        navBar.delegate = self;
+      }
+      [navBar pushNavigationItem:viewController.navigationItem animated:NO];
+      [viewController.stackableNavigationItem.containerView addSubview:navBar];
     }
-    UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:navBarFrame];
-    if (viewController.stackableNavigationItem.barStyle != UIBarStyleDefault) {
-      navBar.barStyle = viewController.stackableNavigationItem.barStyle;
-    }
-    navBar.translucent = viewController.stackableNavigationItem.isTranslucent;
-    if (viewController.stackableNavigationItem.tintColor) {
-      navBar.tintColor = viewController.stackableNavigationItem.tintColor;
-    }
-    navBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    if (previousViewController.navigationItem) {
-      UINavigationItem *previousItem = [[UINavigationItem alloc] initWithTitle:previousViewController.navigationItem.title];
-      previousItem.backBarButtonItem = previousViewController.navigationItem.backBarButtonItem;
-      [navBar pushNavigationItem:previousItem animated:NO];
-      navBar.delegate = self;
-    }
-    [navBar pushNavigationItem:viewController.navigationItem animated:NO];
 
     if (viewController.toolbarItems) {
+      CGRect toolbarFrame;
       CGRectDivide(contentFrame, &toolbarFrame, &contentFrame, 44, CGRectMaxYEdge);
       UIToolbar *toolbar = [[UIToolbar alloc] initWithFrame:toolbarFrame];
       toolbar.items = viewController.toolbarItems;
@@ -372,8 +379,7 @@ typedef enum {
     contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     viewController.view.frame = contentView.bounds;
     [contentView addSubview:viewController.view];
-    [viewController.stackableNavigationItem.containerView addSubview:contentView];
-    [viewController.stackableNavigationItem.containerView addSubview:navBar];
+    [viewController.stackableNavigationItem.containerView insertSubview:contentView atIndex:0];
   }
 }
 

@@ -11,6 +11,7 @@
 
 - (id)init {
   if (self = [super init]) {
+    self.hidesNavigationBar = NO;
     self.barStyle = UIBarStyleDefault;
     self.translucent = NO;
     self.tintColor = nil;
