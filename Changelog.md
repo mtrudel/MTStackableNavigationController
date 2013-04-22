@@ -1,3 +1,7 @@
+## 0.4.5
+
+* Add a flag to make the display of navigation bar optional on a per VC basis
+
 ## 0.4.4
 
 * Lower the amount of pan required to end a reveal
