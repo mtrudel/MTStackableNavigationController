@@ -11,4 +11,5 @@
 @property(nonatomic,strong) UIView *containerView;
 @property(nonatomic) BOOL appearanceCleanupPending;
 @property(nonatomic) BOOL disappearanceCleanupPending;
+@property(nonatomic, strong) UINavigationBar *navigationBar;
 @end

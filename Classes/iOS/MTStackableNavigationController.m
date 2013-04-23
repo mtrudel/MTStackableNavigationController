@@ -99,6 +99,7 @@ typedef enum {
 }
 
 - (NSArray *)popToViewController:(UIViewController *)viewController animated:(BOOL)animated {
+  self.isRevealing = NO;
   NSUInteger index = [self.childViewControllers indexOfObject:viewController];
   if (!self.isRevealing && index != NSNotFound && index < self.childViewControllers.count - 1) {
     NSArray *toRemove = [self.childViewControllers subarrayWithRange:NSMakeRange(index + 1, self.childViewControllers.count - index - 1)];
@@ -349,23 +350,23 @@ typedef enum {
       } else {
         CGRectDivide(viewController.stackableNavigationItem.containerView.bounds, &navBarFrame, &contentFrame, 44, CGRectMinYEdge);
       }
-      UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:navBarFrame];
+      viewController.stackableNavigationItem.navigationBar = [[UINavigationBar alloc] initWithFrame:navBarFrame];
       if (viewController.stackableNavigationItem.barStyle != UIBarStyleDefault) {
-        navBar.barStyle = viewController.stackableNavigationItem.barStyle;
+        viewController.stackableNavigationItem.navigationBar.barStyle = viewController.stackableNavigationItem.barStyle;
       }
-      navBar.translucent = viewController.stackableNavigationItem.isTranslucent;
+      viewController.stackableNavigationItem.navigationBar.translucent = viewController.stackableNavigationItem.isTranslucent;
       if (viewController.stackableNavigationItem.tintColor) {
-        navBar.tintColor = viewController.stackableNavigationItem.tintColor;
+        viewController.stackableNavigationItem.navigationBar.tintColor = viewController.stackableNavigationItem.tintColor;
       }
-      navBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+      viewController.stackableNavigationItem.navigationBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
       if (previousViewController.navigationItem) {
         UINavigationItem *previousItem = [[UINavigationItem alloc] initWithTitle:previousViewController.navigationItem.title];
         previousItem.backBarButtonItem = previousViewController.navigationItem.backBarButtonItem;
-        [navBar pushNavigationItem:previousItem animated:NO];
-        navBar.delegate = self;
+        [viewController.stackableNavigationItem.navigationBar pushNavigationItem:previousItem animated:NO];
+        viewController.stackableNavigationItem.navigationBar.delegate = self;
       }
-      [navBar pushNavigationItem:viewController.navigationItem animated:NO];
-      [viewController.stackableNavigationItem.containerView addSubview:navBar];
+      [viewController.stackableNavigationItem.navigationBar pushNavigationItem:viewController.navigationItem animated:NO];
+      [viewController.stackableNavigationItem.containerView addSubview:viewController.stackableNavigationItem.navigationBar];
     }
 
     if (viewController.toolbarItems) {
@@ -523,7 +524,10 @@ typedef enum {
 #pragma mark - Delegate methods
 
 - (BOOL)navigationBar:(UINavigationBar *)navigationBar shouldPopItem:(UINavigationItem *)item {
-  [self popViewControllerAnimated:YES];
+  UINavigationController *popper = [[self.childViewControllers filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(UIViewController *controller, NSDictionary *bindings) {
+    return controller.stackableNavigationItem.navigationBar == navigationBar;
+  }]] lastObject];
+  [self popToViewController:[self ancestorViewControllerTo:popper] animated:YES];
   return NO;
 }
 
