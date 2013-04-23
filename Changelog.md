@@ -1,3 +1,12 @@
+## 0.4.6
+
+* Pops now pop reveals (if one is in progress). Note that this implies that
+  pops set isRevealing to NO
+* Pops done via a back button now pop the stack to that controllers parent
+  (for example, in the case where a revealed view controller's back button
+  is pushed, the stack is popped to the revealed controller's parent, popping
+  both the top and the revealed view controller).
+
 ## 0.4.5
 
 * Add a flag to make the display of navigation bar optional on a per VC basis

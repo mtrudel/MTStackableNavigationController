@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "MTStackableNavigationController"
-  s.version      = "0.4.5"
+  s.version      = "0.4.6"
   s.summary      = "A drop-in replacement for UINavigationController with stacked views ala Path / Facebook."
   s.description  = <<-DESC
                     MTStackableNavigationController aims to be an API-compatible replacement for
@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
   s.homepage     = "https://github.com/mtrudel/MTStackableNavigationController"
   s.license      = 'MIT'
   s.author       = { "Mat Trudel" => "mat@geeky.net" }
-  s.source       = { :git => "https://github.com/mtrudel/MTStackableNavigationController.git", :tag => "0.4.5" }
+  s.source       = { :git => "https://github.com/mtrudel/MTStackableNavigationController.git", :tag => "0.4.6" }
   s.platform     = :ios, '5.0'
   s.source_files = 'Classes', 'Classes/**/*.{h,m}'
   s.framework    = 'QuartzCore'
