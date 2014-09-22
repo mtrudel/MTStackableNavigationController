@@ -25,7 +25,7 @@ typedef enum {
   MTReveal
 } MTEventType;
 
-@interface MTStackableNavigationController () <UIGestureRecognizerDelegate>
+@interface MTStackableNavigationController () <UIGestureRecognizerDelegate, UINavigationBarDelegate>
 @property(nonatomic) BOOL isRevealing;
 @end
 
