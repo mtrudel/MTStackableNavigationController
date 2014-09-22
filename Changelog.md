@@ -1,3 +1,7 @@
+## 0.4.7
+
+* Quell Xcode 6 warning
+
 ## 0.4.6
 
 * Pops now pop reveals (if one is in progress). Note that this implies that
