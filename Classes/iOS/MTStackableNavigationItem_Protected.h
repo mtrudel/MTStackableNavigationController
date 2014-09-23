@@ -11,5 +11,10 @@
 @property(nonatomic,strong) UIView *containerView;
 @property(nonatomic) BOOL appearanceCleanupPending;
 @property(nonatomic) BOOL disappearanceCleanupPending;
+@property(nonatomic) BOOL willAppearOnPush;
 @property(nonatomic, strong) UINavigationBar *navigationBar;
+@property(nonatomic, strong) UIToolbar *toolBar;
+@property(nonatomic, strong) NSArray *layoutGuideConstraints;
+@property(nonatomic, strong) NSLayoutConstraint *leftLayout;
+@property(nonatomic, strong) NSLayoutConstraint *rightLayout;
 @end

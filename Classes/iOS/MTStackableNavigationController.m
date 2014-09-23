@@ -238,12 +238,14 @@ typedef enum {
       [self layoutViewControllersToPreanimationStateImmediate:toInsert isPush:type == MTPush];
       [self addViewControllersToViewHierarchyImmediate:toInsert];
       [self addShadowsToViewControllers:toInsert animated:YES];
+      [self.view layoutIfNeeded];
     }
     [self removeShadowsFromViewControllers:toRemove animated:YES];
     [UIView animateWithDuration:kAnimationDuration animations:^{
       [self layoutViewControllersToFinalStateForRemovalImmediate:toRemove isPush:type == MTPush];
       [self layoutViewControllersToFinalStateImmediate:expectedHierarchy isReveal:type == MTReveal];
       [self addGestureRecognizersToViews:expectedHierarchy isReveal:type == MTReveal];
+      [self.view layoutIfNeeded];
     } completion:^(BOOL finished) {
       [self removeViewControllersFromViewHierarchyImmediate:toRemove];
       completion();
@@ -268,6 +270,76 @@ typedef enum {
     } else {
       NSAssert(false, @"Don't know what index to add a view controller");
     }
+
+    NSMutableArray *layoutGuideConstraints = [NSMutableArray array];
+    if (viewController.stackableNavigationItem.navigationBar) {
+      [layoutGuideConstraints addObject:[NSLayoutConstraint constraintWithItem:self.topLayoutGuide
+                                                                     attribute:NSLayoutAttributeBottom
+                                                                     relatedBy:NSLayoutRelationEqual
+                                                                        toItem:viewController.stackableNavigationItem.navigationBar
+                                                                     attribute:NSLayoutAttributeTop
+                                                                    multiplier:1.
+                                                                      constant:0.]];
+    } else {
+      [layoutGuideConstraints addObject:[NSLayoutConstraint constraintWithItem:self.topLayoutGuide
+                                                                     attribute:NSLayoutAttributeBottom
+                                                                     relatedBy:NSLayoutRelationEqual
+                                                                        toItem:viewController.topLayoutGuide
+                                                                     attribute:NSLayoutAttributeBottom
+                                                                    multiplier:1.
+                                                                      constant:0.]];
+    }
+    if (viewController.stackableNavigationItem.toolBar) {
+      [layoutGuideConstraints addObject:[NSLayoutConstraint constraintWithItem:self.bottomLayoutGuide
+                                                                     attribute:NSLayoutAttributeTop
+                                                                     relatedBy:NSLayoutRelationEqual
+                                                                        toItem:viewController.stackableNavigationItem.toolBar
+                                                                     attribute:NSLayoutAttributeBottom
+                                                                    multiplier:1.
+                                                                      constant:0.]];
+    } else {
+      [layoutGuideConstraints addObject:[NSLayoutConstraint constraintWithItem:self.bottomLayoutGuide
+                                                                     attribute:NSLayoutAttributeTop
+                                                                     relatedBy:NSLayoutRelationEqual
+                                                                        toItem:viewController.bottomLayoutGuide
+                                                                     attribute:NSLayoutAttributeTop
+                                                                    multiplier:1.
+                                                                      constant:0.]];
+    }
+    [layoutGuideConstraints addObject:[NSLayoutConstraint constraintWithItem:self.view
+                                                                   attribute:NSLayoutAttributeTop
+                                                                   relatedBy:NSLayoutRelationEqual
+                                                                      toItem:viewController.stackableNavigationItem.containerView
+                                                                   attribute:NSLayoutAttributeTop
+                                                                  multiplier:1.
+                                                                    constant:0.]];
+    [layoutGuideConstraints addObject:[NSLayoutConstraint constraintWithItem:self.view
+                                                                   attribute:NSLayoutAttributeBottom
+                                                                   relatedBy:NSLayoutRelationEqual
+                                                                      toItem:viewController.stackableNavigationItem.containerView
+                                                                   attribute:NSLayoutAttributeBottom
+                                                                  multiplier:1.
+                                                                    constant:0.]];
+    viewController.stackableNavigationItem.leftLayout = [NSLayoutConstraint constraintWithItem:viewController.stackableNavigationItem.containerView
+                                                                                     attribute:NSLayoutAttributeLeft
+                                                                                     relatedBy:NSLayoutRelationEqual
+                                                                                        toItem:self.view
+                                                                                     attribute:NSLayoutAttributeLeft
+                                                                                    multiplier:1.
+                                                                                      constant:viewController.stackableNavigationItem.willAppearOnPush? CGRectGetWidth(self.view.frame) : 0];
+    [layoutGuideConstraints addObject:viewController.stackableNavigationItem.leftLayout];
+    viewController.stackableNavigationItem.rightLayout = [NSLayoutConstraint constraintWithItem:viewController.stackableNavigationItem.containerView
+                                                                                      attribute:NSLayoutAttributeRight
+                                                                                      relatedBy:NSLayoutRelationEqual
+                                                                                         toItem:self.view
+                                                                                      attribute:NSLayoutAttributeRight
+                                                                                     multiplier:1.
+                                                                                      constant:viewController.stackableNavigationItem.willAppearOnPush? CGRectGetWidth(self.view.frame) : 0];
+    [layoutGuideConstraints addObject:viewController.stackableNavigationItem.rightLayout];
+    viewController.stackableNavigationItem.willAppearOnPush = NO;
+    [layoutGuideConstraints setValue:@(UILayoutPriorityRequired) forKey:@"priority"];
+    [self.view addConstraints:layoutGuideConstraints];
+    viewController.stackableNavigationItem.layoutGuideConstraints = layoutGuideConstraints;
   }
 }
 
@@ -276,9 +348,7 @@ typedef enum {
   for (UIViewController *viewController in toLayout) {
     NSAssert(![viewController.stackableNavigationItem.containerView isDescendantOfView:self.view], @"Can't pre-position an already inserted view controller");
     if (isPush) {
-      CGRect newFrame = viewController.stackableNavigationItem.containerView.frame;
-      newFrame.origin.x = self.view.bounds.size.width;
-      viewController.stackableNavigationItem.containerView.frame = newFrame;
+      viewController.stackableNavigationItem.willAppearOnPush = YES;
     }
   }
 }
@@ -286,13 +356,11 @@ typedef enum {
 - (void)layoutViewControllersToFinalStateForRemovalImmediate:(NSArray *)toLayout isPush:(BOOL)isPush {
   for (UIViewController *viewController in toLayout) {
     if (isPush) {
-      CGRect newFrame = viewController.stackableNavigationItem.containerView.frame;
-      newFrame.origin.x = -viewController.stackableNavigationItem.containerView.frame.size.width / kCoveredControllerWidthDivisor;
-      viewController.stackableNavigationItem.containerView.frame = newFrame;
+      viewController.stackableNavigationItem.leftLayout.constant -= viewController.stackableNavigationItem.containerView.frame.size.width / kCoveredControllerWidthDivisor;
+      viewController.stackableNavigationItem.rightLayout.constant -= viewController.stackableNavigationItem.containerView.frame.size.width / kCoveredControllerWidthDivisor;
     } else {
-      CGRect newFrame = viewController.stackableNavigationItem.containerView.frame;
-      newFrame.origin.x = self.view.bounds.size.width;
-      viewController.stackableNavigationItem.containerView.frame = newFrame;
+      viewController.stackableNavigationItem.leftLayout.constant += CGRectGetWidth(viewController.stackableNavigationItem.containerView.frame);
+      viewController.stackableNavigationItem.rightLayout.constant += CGRectGetWidth(viewController.stackableNavigationItem.containerView.frame);
     }
   }
 }
@@ -302,24 +370,22 @@ typedef enum {
     if (isReveal) {
       if (viewController == [toLayout lastObject]) {
         CGFloat peek = viewController.stackableNavigationItem.rightPeek;
-        CGRect newFrame = viewController.stackableNavigationItem.containerView.frame;
-        newFrame.origin.x = self.view.bounds.size.width - peek;
-        viewController.stackableNavigationItem.containerView.frame = newFrame;
+        viewController.stackableNavigationItem.leftLayout.constant = self.view.bounds.size.width - peek;
+        viewController.stackableNavigationItem.rightLayout.constant = self.view.bounds.size.width - peek;
       } else {
-        CGRect newFrame = viewController.stackableNavigationItem.containerView.frame;
-        newFrame.origin.x = 0;
-        newFrame.size.width = self.view.bounds.size.width - [[[toLayout lastObject] stackableNavigationItem] rightPeek];
-        viewController.stackableNavigationItem.containerView.frame = newFrame;
+        viewController.stackableNavigationItem.leftLayout.constant = 0;
+        viewController.stackableNavigationItem.rightLayout.constant = -[[[toLayout lastObject] stackableNavigationItem] rightPeek];
+
       }
     } else {
       if (viewController == [toLayout lastObject]) {
         CGFloat peek = [self ancestorViewControllerTo:viewController].stackableNavigationItem.leftPeek;
+        viewController.stackableNavigationItem.leftLayout.constant = peek;
+        viewController.stackableNavigationItem.rightLayout.constant = 0;
         viewController.stackableNavigationItem.containerView.frame = CGRectMake(peek, 0, self.view.bounds.size.width - peek, self.view.bounds.size.height);
       } else {
-        CGRect newFrame = viewController.stackableNavigationItem.containerView.frame;
-        newFrame.origin.x = 0;
-        newFrame.size.width = self.view.bounds.size.width;
-        viewController.stackableNavigationItem.containerView.frame = newFrame;
+        viewController.stackableNavigationItem.leftLayout.constant = 0;
+        viewController.stackableNavigationItem.rightLayout.constant = 0;
       }
     }
   }
@@ -328,59 +394,140 @@ typedef enum {
 - (void)removeViewControllersFromViewHierarchyImmediate:(NSArray *)toRemove {
   for (UIViewController *viewController in toRemove) {
     [viewController.stackableNavigationItem.containerView removeFromSuperview];
+    [self.view removeConstraints:viewController.stackableNavigationItem.layoutGuideConstraints];
   }
 }
 
 - (void)ensureContainerViewExistsForController:(UIViewController *)viewController {
   if (!viewController.stackableNavigationItem.containerView) {
     UIViewController *previousViewController = [self ancestorViewControllerTo:viewController];
-    CGRect rect = UIEdgeInsetsInsetRect(self.view.bounds, UIEdgeInsetsMake(0, previousViewController.stackableNavigationItem.leftPeek, 0, 0));
-    viewController.stackableNavigationItem.containerView = [[UIView alloc] initWithFrame:rect];
-    CGRect contentFrame;
-    if (viewController.stackableNavigationItem.hidesNavigationBar) {
-      contentFrame = viewController.stackableNavigationItem.containerView.bounds;
-    } else {
-      CGRect navBarFrame;
-      if (viewController.stackableNavigationItem.isTranslucent) {
-        navBarFrame = CGRectMake(0, 0, rect.size.width, 44);
-        contentFrame = viewController.stackableNavigationItem.containerView.bounds;
-        if ([viewController.view respondsToSelector:@selector(setContentInset:)]) {
-          [((id)viewController.view) setContentInset:UIEdgeInsetsMake(44, 0, 0, 0)];
-        }
-      } else {
-        CGRectDivide(viewController.stackableNavigationItem.containerView.bounds, &navBarFrame, &contentFrame, 44, CGRectMinYEdge);
-      }
-      viewController.stackableNavigationItem.navigationBar = [[UINavigationBar alloc] initWithFrame:navBarFrame];
+
+    CGRect containerRect = UIEdgeInsetsInsetRect(self.view.bounds, UIEdgeInsetsMake(0, previousViewController.stackableNavigationItem.leftPeek, 0, 0));
+    UIView *containerView = [[UIView alloc] initWithFrame:containerRect];
+    containerView.translatesAutoresizingMaskIntoConstraints = NO;
+    containerView.backgroundColor = [UIColor whiteColor];
+
+    // First, insert the navigation bar if needed
+    if (!viewController.stackableNavigationItem.hidesNavigationBar) {
+      UINavigationBar *navigationBar = [[UINavigationBar alloc] initWithFrame:CGRectZero];
+      navigationBar.translatesAutoresizingMaskIntoConstraints = NO;
+      viewController.stackableNavigationItem.navigationBar = navigationBar;
       if (viewController.stackableNavigationItem.barStyle != UIBarStyleDefault) {
-        viewController.stackableNavigationItem.navigationBar.barStyle = viewController.stackableNavigationItem.barStyle;
+        navigationBar.barStyle = viewController.stackableNavigationItem.barStyle;
       }
-      viewController.stackableNavigationItem.navigationBar.translucent = viewController.stackableNavigationItem.isTranslucent;
+      navigationBar.translucent = viewController.stackableNavigationItem.isTranslucent;
       if (viewController.stackableNavigationItem.tintColor) {
-        viewController.stackableNavigationItem.navigationBar.tintColor = viewController.stackableNavigationItem.tintColor;
+        navigationBar.tintColor = viewController.stackableNavigationItem.tintColor;
       }
-      viewController.stackableNavigationItem.navigationBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
       if (previousViewController.navigationItem) {
         UINavigationItem *previousItem = [[UINavigationItem alloc] initWithTitle:previousViewController.navigationItem.title];
         previousItem.backBarButtonItem = previousViewController.navigationItem.backBarButtonItem;
-        [viewController.stackableNavigationItem.navigationBar pushNavigationItem:previousItem animated:NO];
-        viewController.stackableNavigationItem.navigationBar.delegate = self;
+        [navigationBar pushNavigationItem:previousItem animated:NO];
+        navigationBar.delegate = self;
       }
-      [viewController.stackableNavigationItem.navigationBar pushNavigationItem:viewController.navigationItem animated:NO];
-      [viewController.stackableNavigationItem.containerView addSubview:viewController.stackableNavigationItem.navigationBar];
+      [navigationBar pushNavigationItem:viewController.navigationItem animated:NO];
+
+      CGFloat preferredHeight = [navigationBar intrinsicContentSize].height;
+      [containerView addSubview:navigationBar];
+      [containerView addConstraint:[NSLayoutConstraint constraintWithItem:navigationBar
+                                                                attribute:NSLayoutAttributeLeft
+                                                                relatedBy:NSLayoutRelationEqual
+                                                                   toItem:containerView
+                                                                attribute:NSLayoutAttributeLeft
+                                                               multiplier:1.
+                                                                 constant:0.]];
+      [containerView addConstraint:[NSLayoutConstraint constraintWithItem:navigationBar
+                                                                attribute:NSLayoutAttributeRight
+                                                                relatedBy:NSLayoutRelationEqual
+                                                                   toItem:containerView
+                                                                attribute:NSLayoutAttributeRight
+                                                               multiplier:1.
+                                                                 constant:0.]];
+      [containerView addConstraint:[NSLayoutConstraint constraintWithItem:navigationBar
+                                                                attribute:NSLayoutAttributeHeight
+                                                                relatedBy:NSLayoutRelationEqual
+                                                                   toItem:nil
+                                                                attribute:NSLayoutAttributeNotAnAttribute
+                                                               multiplier:1.
+                                                                 constant:preferredHeight]];
     }
 
+    // Next, insert the toolbar if needed
     if (viewController.toolbarItems) {
-      CGRect toolbarFrame;
-      CGRectDivide(contentFrame, &toolbarFrame, &contentFrame, 44, CGRectMaxYEdge);
-      UIToolbar *toolbar = [[UIToolbar alloc] initWithFrame:toolbarFrame];
+      UIToolbar *toolbar = [[UIToolbar alloc] initWithFrame:CGRectZero];
+      viewController.stackableNavigationItem.toolBar = toolbar;
+      toolbar.translatesAutoresizingMaskIntoConstraints = NO;
       toolbar.items = viewController.toolbarItems;
-      [viewController.stackableNavigationItem.containerView addSubview:toolbar];
+      CGFloat preferredHeight = [toolbar intrinsicContentSize].height;
+      [containerView addSubview:toolbar];
+      [containerView addConstraint:[NSLayoutConstraint constraintWithItem:toolbar
+                                                                attribute:NSLayoutAttributeLeft
+                                                                relatedBy:NSLayoutRelationEqual
+                                                                   toItem:containerView
+                                                                attribute:NSLayoutAttributeLeft
+                                                               multiplier:1.
+                                                                 constant:0.]];
+      [containerView addConstraint:[NSLayoutConstraint constraintWithItem:toolbar
+                                                                attribute:NSLayoutAttributeRight
+                                                                relatedBy:NSLayoutRelationEqual
+                                                                   toItem:containerView
+                                                                attribute:NSLayoutAttributeRight
+                                                               multiplier:1.
+                                                                 constant:0.]];
+      [containerView addConstraint:[NSLayoutConstraint constraintWithItem:toolbar
+                                                                attribute:NSLayoutAttributeHeight
+                                                                relatedBy:NSLayoutRelationEqual
+                                                                   toItem:nil
+                                                                attribute:NSLayoutAttributeNotAnAttribute
+                                                               multiplier:1.
+                                                                 constant:preferredHeight]];
     }
-    UIView *contentView = [[UIView alloc] initWithFrame:contentFrame];
-    contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    viewController.view.frame = contentView.bounds;
-    [contentView addSubview:viewController.view];
-    [viewController.stackableNavigationItem.containerView insertSubview:contentView atIndex:0];
+
+    // Finally, insert the controller's view
+    UIView *view = viewController.view;
+    view.translatesAutoresizingMaskIntoConstraints = NO;
+    [view removeConstraints:[view constraints]];
+    [containerView insertSubview:view atIndex:0];
+    [containerView addConstraint:[NSLayoutConstraint constraintWithItem:view
+                                                              attribute:NSLayoutAttributeLeft
+                                                              relatedBy:NSLayoutRelationEqual
+                                                                 toItem:containerView
+                                                              attribute:NSLayoutAttributeLeft
+                                                             multiplier:1.
+                                                               constant:0.]];
+    [containerView addConstraint:[NSLayoutConstraint constraintWithItem:view
+                                                              attribute:NSLayoutAttributeRight
+                                                              relatedBy:NSLayoutRelationEqual
+                                                                 toItem:containerView
+                                                              attribute:NSLayoutAttributeRight
+                                                             multiplier:1.
+                                                               constant:0.]];
+    if (viewController.stackableNavigationItem.navigationBar) {
+      [containerView addConstraint:[NSLayoutConstraint constraintWithItem:view
+                                                                attribute:NSLayoutAttributeTop
+                                                                relatedBy:NSLayoutRelationEqual
+                                                                   toItem:viewController.stackableNavigationItem.navigationBar
+                                                                attribute:NSLayoutAttributeBottom
+                                                               multiplier:1.
+                                                                 constant:0.]];
+    } else {
+      [containerView addConstraint:[NSLayoutConstraint constraintWithItem:view
+                                                                attribute:NSLayoutAttributeTop
+                                                                relatedBy:NSLayoutRelationEqual
+                                                                   toItem:containerView
+                                                                attribute:NSLayoutAttributeTop
+                                                               multiplier:1.
+                                                                 constant:0.]];
+    }
+    [containerView addConstraint:[NSLayoutConstraint constraintWithItem:view
+                                                              attribute:NSLayoutAttributeBottom
+                                                              relatedBy:NSLayoutRelationEqual
+                                                                 toItem:containerView
+                                                              attribute:NSLayoutAttributeBottom
+                                                             multiplier:1.
+                                                               constant:0.]];
+    // Last but not least, add the outer container view to the VC's stackableItem
+    viewController.stackableNavigationItem.containerView = containerView;
   }
 }
 
