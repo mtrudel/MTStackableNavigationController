@@ -27,6 +27,7 @@ typedef enum {
 
 @interface MTStackableNavigationController () <UIGestureRecognizerDelegate, UINavigationBarDelegate>
 @property(nonatomic) BOOL isRevealing;
+@property(nonatomic, strong) UIView *statusBarMask;
 @end
 
 @implementation MTStackableNavigationController
@@ -43,6 +44,41 @@ typedef enum {
 }
 
 # pragma mark - Lifecycle methods
+
+- (void)viewDidLoad {
+  self.statusBarMask = [[UIView alloc] initWithFrame:CGRectZero];
+  self.statusBarMask.translatesAutoresizingMaskIntoConstraints = NO;
+  self.statusBarMask.backgroundColor = [UIColor whiteColor];
+  [self.view insertSubview:self.statusBarMask atIndex:0];
+  [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.topLayoutGuide
+                                                        attribute:NSLayoutAttributeTop
+                                                        relatedBy:NSLayoutRelationEqual
+                                                           toItem:self.statusBarMask
+                                                        attribute:NSLayoutAttributeTop
+                                                       multiplier:1.
+                                                         constant:0.]];
+  [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.topLayoutGuide
+                                                        attribute:NSLayoutAttributeBottom
+                                                        relatedBy:NSLayoutRelationEqual
+                                                           toItem:self.statusBarMask
+                                                        attribute:NSLayoutAttributeBottom
+                                                       multiplier:1.
+                                                         constant:0.]];
+  [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.view
+                                                        attribute:NSLayoutAttributeLeft
+                                                        relatedBy:NSLayoutRelationEqual
+                                                           toItem:self.statusBarMask
+                                                        attribute:NSLayoutAttributeLeft
+                                                       multiplier:1.
+                                                         constant:0.]];
+  [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.view
+                                                        attribute:NSLayoutAttributeRight
+                                                        relatedBy:NSLayoutRelationEqual
+                                                           toItem:self.statusBarMask
+                                                        attribute:NSLayoutAttributeRight
+                                                       multiplier:1.
+                                                         constant:0.]];
+}
 
 - (void)viewWillAppear:(BOOL)animated {
   [self updateViewControllerHierarchyForEventType:MTPush withPendingRemovals:nil animated:NO completion:nil];
@@ -262,7 +298,7 @@ typedef enum {
 - (void)addViewControllersToViewHierarchyImmediate:(NSArray *)toInsert {
   for (UIViewController *viewController in [toInsert reverseObjectEnumerator]) {
     if (viewController == self.topViewController) {
-      [self.view addSubview:viewController.stackableNavigationItem.containerView];
+      [self.view insertSubview:viewController.stackableNavigationItem.containerView belowSubview:self.statusBarMask];
     } else if (viewController == [self ancestorViewControllerTo:self.topViewController]) {
       [self.view insertSubview:viewController.stackableNavigationItem.containerView belowSubview:self.topViewController.stackableNavigationItem.containerView];
     } else if (viewController == [self ancestorViewControllerTo:[self ancestorViewControllerTo:self.topViewController]]) {
@@ -306,8 +342,8 @@ typedef enum {
                                                                     multiplier:1.
                                                                       constant:0.]];
     }
-    [layoutGuideConstraints addObject:[NSLayoutConstraint constraintWithItem:self.view
-                                                                   attribute:NSLayoutAttributeTop
+    [layoutGuideConstraints addObject:[NSLayoutConstraint constraintWithItem:self.topLayoutGuide
+                                                                   attribute:NSLayoutAttributeBottom
                                                                    relatedBy:NSLayoutRelationEqual
                                                                       toItem:viewController.stackableNavigationItem.containerView
                                                                    attribute:NSLayoutAttributeTop
