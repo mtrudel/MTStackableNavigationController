@@ -287,10 +287,11 @@ typedef enum {
       completion();
     }];
   } else {
-    [self layoutViewControllersToFinalStateImmediate:expectedHierarchy isReveal:type == MTReveal];
     [self addViewControllersToViewHierarchyImmediate:toInsert];
-    [self removeViewControllersFromViewHierarchyImmediate:toRemove];
     [self addShadowsToViewControllers:toInsert animated:NO];
+    [self layoutViewControllersToFinalStateImmediate:expectedHierarchy isReveal:type == MTReveal];
+    [self.view layoutIfNeeded];
+    [self removeViewControllersFromViewHierarchyImmediate:toRemove];
     completion();
   }
 }
