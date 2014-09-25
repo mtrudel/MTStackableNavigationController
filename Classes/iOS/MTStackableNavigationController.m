@@ -419,7 +419,6 @@ typedef enum {
         CGFloat peek = [self ancestorViewControllerTo:viewController].stackableNavigationItem.leftPeek;
         viewController.stackableNavigationItem.leftLayout.constant = peek;
         viewController.stackableNavigationItem.rightLayout.constant = 0;
-        viewController.stackableNavigationItem.containerView.frame = CGRectMake(peek, 0, self.view.bounds.size.width - peek, self.view.bounds.size.height);
       } else {
         viewController.stackableNavigationItem.leftLayout.constant = 0;
         viewController.stackableNavigationItem.rightLayout.constant = 0;
