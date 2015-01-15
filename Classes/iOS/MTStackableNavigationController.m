@@ -46,6 +46,7 @@ typedef enum {
 # pragma mark - Lifecycle methods
 
 - (void)viewDidLoad {
+  [super viewDidLoad];
   self.statusBarMask = [[UIView alloc] initWithFrame:CGRectZero];
   self.statusBarMask.translatesAutoresizingMaskIntoConstraints = NO;
   self.statusBarMask.backgroundColor = [UIColor whiteColor];
@@ -81,10 +82,12 @@ typedef enum {
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+  [super viewWillAppear:animated];
   [self updateViewControllerHierarchyForEventType:MTPush withPendingRemovals:nil animated:NO completion:nil];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
+  [super viewDidAppear:animated];
   for (UIViewController *viewController in self.childViewControllers) {
     if (viewController.stackableNavigationItem.appearanceCleanupPending) {
       [self postAppearanceViewControllerCleanup:viewController animated:NO];
@@ -93,6 +96,7 @@ typedef enum {
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
+  [super viewWillDisappear:animated];
   for (UIViewController *viewController in [self currentlyVisibleViewControllers]) {
     [viewController beginAppearanceTransition:NO animated:NO];
     viewController.stackableNavigationItem.disappearanceCleanupPending = YES;
@@ -100,6 +104,7 @@ typedef enum {
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
+  [super viewDidDisappear: animated];
   for (UIViewController *viewController in self.childViewControllers) {
     if (viewController.stackableNavigationItem.disappearanceCleanupPending) {
       [self postDisappearanceViewControllerCleanup:viewController removeFromViewControllerHierarchy:NO];
